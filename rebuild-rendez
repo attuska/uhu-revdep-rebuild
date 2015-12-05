@@ -115,7 +115,7 @@ while [ "$csomaglista" ]; do
     for csomagtagko in $csomagtagkohalmaz; do 
       keresettko=$(echo "$csomaglista" | grep -E ^"$csomagtagko"$)
       if [ "$keresettko" == "$csomagtagko" ]; then
-	van="1"k
+	van="1"
 	break # Már találtunk, nincs értelme tovább keresni, kilépünk a do ciklusból 
       fi
     done
