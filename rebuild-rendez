@@ -120,10 +120,8 @@ while [ "$csomaglista" ]; do
       fi
     done
 # lezajlott a keresés, kiértékelés
-    if [ $van ]; then # Ha talátuk építőkövet a listában, akkor nem vehető ki a rendezendők listájából a csomagtag
-	csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
-	csomaglista="$(echo -e "$csomaglista"'\n'"$csomagtag")"
-    else # a csomagtag építőkövéből nem szerepel egy sem a hátralévő csomaglistában, tehát ki lehet szedni a listából
+    if [ ! $van ]; then
+# a csomagtag építőkövéből nem szerepel egy sem a hátralévő csomaglistában, tehát ki lehet szedni a listából
 	echo "$csomagtag" >> csomagrend
 	echo `apt-cache show $csomagtag | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g` >> ubrend
 	csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
