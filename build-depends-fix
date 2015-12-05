@@ -12,7 +12,7 @@ for listaelem in $eredetilista; do # mindegyik listaelemet végignézem
     for alelem in $eredetilista; do # minden alelem
     alelemdeps=$(apt-cache depends "$alelem" | grep Függ | sed s/"  Függ ettől: "//g | sort -u)
     alelemdep=$(echo "$alelemdeps" | grep -E ^"$listaelem"$)
-      if [ "$alelemdep" ]; then # ha a szűrő nemüres
+      if [ "$alelemdep" == "$listaelem" ]; then # ha a szűrő nemüres
 	  van=""	# akkor a csomagot nem kell berakni
 	  echo "$listaelem"" csomagot felhúzza: ""$alelem"
 	  break
