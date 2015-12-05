@@ -131,10 +131,7 @@ done
 # Rendezés kész
 
 # Értesítés
-echo
-echo
-printf "%s \e[1;34m ub tisztítás \e[0m%s"
-echo
+printf "%s\n\n\e[1;34m ub tisztítás \e[0m%s\n"
 # Az ub ismétlődések közül csak az első előfordulást hagyjuk meg.
 ujsor="xxxxyyyyyzzzz"
 for i in `cat ubrend`; do
@@ -149,6 +146,5 @@ for i in `cat ubrend`; do
   fi
 done
 echo "$(echo "$ujsor" | sed s/xxxxyyyyyzzzz//g | sed '/^$/d')" >ubrend
-echo
-printf "%s \e[1;31mKész! \e[0m%s"
-echo
+printf "%s\n \e[1;31mKész! \e[0m%s\n"
+
