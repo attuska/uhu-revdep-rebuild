@@ -40,7 +40,7 @@
 # változók
 ##########
 
-# i, j			- univerzális ciklusváltozók
+# i, j			- univerzális ciklusváltozók$(echo "${csomaglista}" | wc -w)
 # csomaglista		- a rendezetlen csomaghalmaz
 # tisztalista		. a kersztfüggő csomagpároktól tisztított csomaglista
 # csomagdarab		- a csomaglista elemeinek száma
@@ -99,6 +99,7 @@ csomaglista="$tisztalista"
 # A teljes csomaglista rendezése úgy, hogy az adott csomag ne építkezzen az utána következők egyikéből sem.
 printf "\n\n%s \e[1;34m$(echo "${csomaglista}" | wc -w) darab rendezendő csomag van \e[0m%s\n\n"
 #
+
 while [ "$csomaglista" ]; do
   for csomagtag in $csomaglista; do
     csomagdarab=$(echo "${csomaglista}" | wc -w)
@@ -115,7 +116,12 @@ while [ "$csomaglista" ]; do
     echo "$csomagtag" >> csomagrend
     echo `apt-cache show $csomagtag | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g` >> ubrend
     csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
-   done
+  done
+  if [ "$csomagdarab" == "$(echo "${csomaglista}" | wc -w)" ]; then # végtelen ciklus!
+    echo 'Végtelen ciklus, az aktuális csomaglista a "kigyo" fájlba íratva'
+    echo "$csomaglista" > kigyo
+    break
+  fi
 done
 # Rendezés kész
 
