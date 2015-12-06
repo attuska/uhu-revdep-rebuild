@@ -72,7 +72,6 @@ tisztalista="$csomaglista"
 while [ "$csomaglista" ]; do # míg a csomaglista el nem fogy,a csomagtag építököveniek elődordulásait keressük
   for csomagtag in $csomaglista; do
     csomagdarab=$(echo "${csomaglista}" | wc -w)
-    van=""
     echo -en "$csomagdarab" "van hátra, keresztvizsgálat: ""$csomagtag""                   "'\r'
     csomagtagkohalmaz=$(csomagko "$csomagtag")
 # Az építőkövek mindegyikét keressük a rendezésre váró listában
@@ -82,22 +81,17 @@ while [ "$csomaglista" ]; do # míg a csomaglista el nem fogy,a csomagtag épít
 	    keresettkohalmaz=$(apt-cache show "$csomagtagko" | grep Depends: | head -1 | sed s/Depends:" "//g | sed s/," "/\\n/g | grep \( | sed s/" "\(\.*//g | sort -u)
 	    kereszt=$(echo "$keresettkohalmaz" | grep -E ^"$csomagtag"$)
 	    if [ "$kereszt" == "$csomagtag" ]; then # Ha egyezik jelzem és a ciklust is magszakítom 
-	      van="1" 
-	      break
+	      printf "\n%s \e[1;31m A $csomagtag és a $csomagtagko egymásból építkezik! \e[0m%s\n"
+	      printf "%s \e[1;31m Ezek eltávolítva a rendezendőkből és a keresztek fájlba írva! \e[0m%s\n"
+	      echo "$csomagtag" >> keresztek
+	      echo "$csomagtagko" >> keresztek
+	      csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d | sed /^$csomagtagko$/d)"
+	      tisztalista="$(echo "$tisztalista" | sed /^$csomagtag$/d | sed /^$csomagtagko$/d)"
+	      break 2
  	    fi
 	fi      
     done
-    if [ $van ]; then # Ha találtunk keresztfüggést
-      printf "\n%s \e[1;31m A $csomagtag és a $csomagtagko egymásból építkezik! \e[0m%s\n"
-      printf "%s \e[1;31m Ezek eltávolítva a rendezendőkből és a keresztek fájlba írva! \e[0m%s\n"
-      echo "$csomagtag" >> keresztek
-      echo "$csomagtagko" >> keresztek
-      csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d | sed /^$csomagtagko$/d)"
-      tisztalista="$(echo "$tisztalista" | sed /^$csomagtag$/d | sed /^$csomagtagko$/d)"
-      break
-    else
-      csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
-   fi
+    csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
   done
 done
 csomaglista="$tisztalista"
@@ -108,24 +102,19 @@ printf "\n\n%s \e[1;34m$(echo "${csomaglista}" | wc -w) darab rendezendő csomag
 while [ "$csomaglista" ]; do
   for csomagtag in $csomaglista; do
     csomagdarab=$(echo "${csomaglista}" | wc -w)
-    van=""
     echo -en "$csomagdarab"" van hátra, vizsgálat: ""$csomagtag""                  "'\r'
     csomagtagkohalmaz=$(csomagko "$csomagtag")
 # Az építőkövek mindegyikét keressük a rendezésre váró listában
     for csomagtagko in $csomagtagkohalmaz; do 
       keresettko=$(echo "$csomaglista" | grep -E ^"$csomagtagko"$)
       if [ "$keresettko" == "$csomagtagko" ]; then
-	van="1"
-	break # Már találtunk, nincs értelme tovább keresni, kilépünk a do ciklusból 
+	continue 2
       fi
     done
-# lezajlott a keresés, kiértékelés
-    if [ ! $van ]; then
 # a csomagtag építőkövéből nem szerepel egy sem a hátralévő csomaglistában, tehát ki lehet szedni a listából
-	echo "$csomagtag" >> csomagrend
-	echo `apt-cache show $csomagtag | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g` >> ubrend
-	csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
-    fi
+    echo "$csomagtag" >> csomagrend
+    echo `apt-cache show $csomagtag | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g` >> ubrend
+    csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
    done
 done
 # Rendezés kész

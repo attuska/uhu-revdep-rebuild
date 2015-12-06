@@ -8,19 +8,15 @@
 eredetilista=$(cat build-depends | sort -u)
 
 for listaelem in $eredetilista; do # mindegyik listaelemet végignézem
-    van="0"
     for alelem in $eredetilista; do # minden alelem
     alelemdeps=$(apt-cache depends "$alelem" | grep Függ | sed s/"  Függ ettől: "//g | sort -u)
     alelemdep=$(echo "$alelemdeps" | grep -E ^"$listaelem"$)
       if [ "$alelemdep" == "$listaelem" ]; then # ha a szűrő nemüres
-	  van=""	# akkor a csomagot nem kell berakni
 	  echo "$listaelem"" csomagot felhúzza: ""$alelem"
-	  break
+	  continue 2
       fi
-    done
-    if [ "$van" ]; then
-      echo $listaelem
-      ujlista=$(echo -e "$listaelem"'\n'"$ujlista")
-    fi
+     done
+     echo $listaelem
+     ujlista=$(echo -e "$listaelem"'\n'"$ujlista")
 done
 echo "$ujlista" | sort -u > build-depends-uj
