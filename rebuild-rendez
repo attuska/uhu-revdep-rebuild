@@ -40,7 +40,7 @@
 # változók
 ##########
 
-# i, j			- univerzális ciklusváltozók$(echo "${csomaglista}" | wc -w)
+# i, j			- univerzális ciklusváltozók
 # csomaglista		- a rendezetlen csomaghalmaz
 # tisztalista		. a kersztfüggő csomagpároktól tisztított csomaglista
 # csomagdarab		- a csomaglista elemeinek száma
