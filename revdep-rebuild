@@ -3,10 +3,10 @@
 # revdep-rebuild szkript
 
 # Ez a szkript a bemeneti paraméterként megadott fő verziószámban frissített csomag(ok) miatt nagy valószínűséggel működésképtelenné
-# váló, ezért újrafordítandó csomagok listáját adja vissza "nyerslista fájlban.
-# továbbá a rebuild-rendez hívásával ezek helyes fordítási sorrendjeit a "csomgarend" és "ubrend" fájlokban.
+# váló, ezért újrafordítandó csomagok listáját adja vissza a "nyerslista" fájlban.
+# továbbá a rebuild-rendez hívásával ezek helyes fordítási sorrendjeit az a "csomgarend" és "ubrend" fájlokba írja.
 # Az első paraméter szám legyen, mely a felsorolandó csomagok áttételes függési mélységének kívánalma. 
-
+# Ha a második paraméter "-noskip", akkor a rebuild-rendez keresztüggő csomagpárokat is fog a rendezés előtt keresni.
 
 #####################################
 # a kiírt fájlok, amit a $pwd -be ír:
@@ -32,12 +32,16 @@
 ##########
 
 # jó paraméter kell a szkriptnek
+
 melyseg=$(echo $1 | bc)
 if [ "$melyseg" == "0" ] || [ ! "$2" ]; then
-	echo 'Használat: revdep-rebuild <mélység> <csomag> [csomag]...)!' >&2
+	echo 'Használat: revdep-rebuild <mélység> [-skip] <csomag> [csomag]...)!' >&2
 	exit 1
 fi
-
+skip=""
+if [ "$2" == "-noskip" ]; then
+skip="-noskip"
+fi
 # Esetlegesen létező fájlok eltávolítása
 rm -f nyerslista
 
@@ -48,7 +52,7 @@ for num in "$@" ; do
   parancslista=$(echo -e "$parancslista"'\n'"$num")
   fi
 done
-
+parancslista=$(echo "$parancslista" | sed '/^$/d' | sed '/^-noskip$/d')
 # A bemeneti paraméter(ek) alapján a fordítandó csomagok ABC sorbarendezett, duplikátumok nélküli stringjének legyártása
 echo $melyseg' mélységű függésben lesznek a listák elkészítve'
 csomaglista="$parancslista"
@@ -95,10 +99,5 @@ for num in $parancslista; do
 csomaglista=$(echo -e "$num"'\n'"$csomaglista")
 done
 echo "$csomaglista" >>nyerslista
-#for i in $csomaglista; do
-#  echo $i >> nyerslista
-#done
-
-# Értesítés
 echo "$(echo ${csomaglista} | wc -w)" " csomag előzetes rendezése kész"
-rebuild-rendez "$csomaglista"
+rebuild-rendez "$skip" "$csomaglista"

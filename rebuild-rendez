@@ -57,18 +57,19 @@ if [ $# = 0 ]; then
 	echo 'Használat: rebuild-rendez <csomagok>!' >&2
 	exit 1
 fi
-
-# Keresztkeresés
-printf "\n\n%s \e[1;34m$(echo "$@" | wc -w) darab rendezendő csomag van, melyekben először keresztfüggő párokat keresünk \e[0m%s\n\n"
-#echo "$csomagdarab" ' darab rendezendő csomag van, melyekben először keresztfüggő párokat keresünk'
-echo "$@" > csomagok
 tisztalista=""
 rm -rf csomagrend ubrend keresztek
 csomaglista=""
 for i in $@; do
 csomaglista=$(echo -e "$csomaglista"'\n'"$i")
 done
+skip=$(echo "$csomaglista" | grep -E ^"-noskip"$)
+csomaglista=$(echo "$csomaglista" | sed '/^$/d' | sed '/^-noskip$/d')
 tisztalista="$csomaglista"
+echo "$csomaglista" > csomagok
+if [ "$skip" == "-noskip" ];then
+# Keresztkeresés
+printf "\n\n%s \e[1;34m$(echo "$csomaglista" | wc -w) darab rendezendő csomag van, melyekben először keresztfüggő párokat keresünk \e[0m%s\n\n"
 while [ "$csomaglista" ]; do # míg a csomaglista el nem fogy,a csomagtag építököveniek elődordulásait keressük
   for csomagtag in $csomaglista; do
     csomagdarab=$(echo "${csomaglista}" | wc -w)
@@ -95,13 +96,16 @@ while [ "$csomaglista" ]; do # míg a csomaglista el nem fogy,a csomagtag épít
   done
 done
 csomaglista="$tisztalista"
-
+else
+printf "\n\n%s \e[1;34m Keresztfüggő párok keresése átlépve. \e[0m%s\n\n"
+fi
 # A teljes csomaglista rendezése úgy, hogy az adott csomag ne építkezzen az utána következők egyikéből sem.
 printf "\n\n%s \e[1;34m$(echo "${csomaglista}" | wc -w) darab rendezendő csomag van \e[0m%s\n\n"
 #
 control="0"
 while [ "$csomaglista" ]; do
   for csomagtag in $csomaglista; do
+    van="1"
     csomagdarab=$(echo "${csomaglista}" | wc -w)
     echo -en "$csomagdarab"" van hátra, vizsgálat: ""$csomagtag""                  "'\r'
     csomagtagkohalmaz=$(csomagko "$csomagtag")
@@ -109,16 +113,19 @@ while [ "$csomaglista" ]; do
     for csomagtagko in $csomagtagkohalmaz; do 
       keresettko=$(echo "$csomaglista" | grep -E ^"$csomagtagko"$)
       if [ "$keresettko" == "$csomagtagko" ]; then
-	continue 2
+	van=""
+	break
       fi
     done
 # a csomagtag építőkövéből nem szerepel egy sem a hátralévő csomaglistában, tehát ki lehet szedni a listából
+    if [ "$van" ];then
     echo "$csomagtag" >> csomagrend
     echo `apt-cache show $csomagtag | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g` >> ubrend
     csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
+    fi
   done
   if [ "$csomagdarab" == "$(echo "${csomaglista}" | wc -w)" ]; then # végtelen ciklus!
-    if [ "$control" == "1" ]; then
+    if [ "$control" == "2" ]; then
       echo -e '\n'
       echo 'Végtelen ciklus, az aktuális csomaglista a "kigyo" fájlba íratva'
       echo "$csomaglista" > kigyo
