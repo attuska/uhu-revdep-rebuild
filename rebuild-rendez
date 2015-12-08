@@ -102,8 +102,8 @@ fi
 # A teljes csomaglista rendezése úgy, hogy az adott csomag ne építkezzen az utána következők egyikéből sem.
 printf "\n\n%s \e[1;34m$(echo "${csomaglista}" | wc -w) darab rendezendő csomag van \e[0m%s\n\n"
 #
-control="0"
 while [ "$csomaglista" ]; do
+  control=$(echo "${csomaglista}" | wc -w)
   for csomagtag in $csomaglista; do
     van="1"
     csomagdarab=$(echo "${csomaglista}" | wc -w)
@@ -124,14 +124,11 @@ while [ "$csomaglista" ]; do
     csomaglista="$(echo "$csomaglista" | sed /^$csomagtag$/d)"
     fi
   done
-  if [ "$csomagdarab" == "$(echo "${csomaglista}" | wc -w)" ]; then # végtelen ciklus!
-    if [ "$control" == "2" ]; then
+  if [ "$control" == "$(echo "${csomaglista}" | wc -w)" ]; then # végtelen ciklus!
       echo -e '\n'
       echo 'Végtelen ciklus, az aktuális csomaglista a "kigyo" fájlba íratva'
       echo "$csomaglista" > kigyo
       break
-    fi
-    control=$(echo "$control"+1 | bc)  
   fi
 done
 # Rendezés kész
