@@ -74,7 +74,7 @@ echo ---------
 
 # esetleges paraméter csomagok előfordulásainak eltávolítása a listából
 for i in $frisscsomagok ;do
-    csomaglista="$(echo "$csomaglista" | sed '/^$i$/d')"
+    csomaglista="$(echo "$csomaglista" | sed /^$i$/d)"
 done
 # Előzetes rendezés az egyes csomagok építőköveinek számossága szerint növekedőn. Legelől lesznek a legkevesebb csomagból építkezők.
 ujlista=""
