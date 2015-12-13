@@ -11,5 +11,5 @@ if [ $# = 0 ]; then
 	exit 1
 fi
 
-apt-cache show "$1" | grep Depends: | head -1 | sed s/Depends:" "//g | sed s/," "/\\n/g | grep \( | sed s/" "\(\.*//g | sort -u
-#apt-cache dotty "$1" | grep shape=box | sed s/\\" ".*//g | sed s/\"""//g
+#apt-cache show "$1" | grep Depends: | head -1 | sed s/Depends:" "//g | sed s/," "/\\n/g | grep \( | sed s/" "\(\.*//g | sort -u
+apt-cache dotty "$1" | grep shape=box | sed s/\\" ".*//g | sed s/\"""//g | sed /^$1$/d | sort -u
