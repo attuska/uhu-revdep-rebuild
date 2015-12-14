@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# revdep szkript
+# jó paraméter kell a szkriptnek
+
+melyseg=$(echo $1 | bc)
+if [ "$melyseg" == "0" ] || [ ! "$2" ]; then
+	echo 'Használat: revdep <mélység> <csomag> [csomag]...)!' >&2
+	exit 1
+fi
+# mélységi paraméter kiszedése a paraméterlistából
+
+frisscsomagok=""
+for num in "$@" ; do
+  if [ ! $num == $1 ]; then
+  frisscsomagok=$(echo -e "$frisscsomagok"'\n'"$num")
+  fi
+done
+frisscsomagok=$(echo "$frisscsomagok" | sed '/^$/d' | sed '/^-noskip$/d')
+# A bemeneti paraméter(ek) alapján a fordítandó csomagok ABC sorbarendezett, duplikátumok nélküli stringjének legyártása
+echo $melyseg' mélységű függésben gyűjtjük össze az újrafordítandó csomagokat'
+csomaglista="$frisscsomagok"
+#mélység szerint a csomagtenger növelése
+ujlista=$(csomagfi $csomaglista | sort -u | sed 's/^\ //g')
+csomaglista="$ujlista"
+ujlista=""
+
+melyseg=$(echo $melyseg'-1' | bc)
+while [ ! "$melyseg" == "0" ]; do
+  ujlista=$(csomagfi $csomaglista | sort -u)
+  csomaglista=$(echo -e "$csomaglista"'\n'"$ujlista" | sed 's/^\ //g' | sort -u)
+  melyseg=$(echo $melyseg'-1' | bc)
+done
+csomaglista=$(echo -e "$csomaglista"'\n'"$frisscsomagok" | sed 's/^\ //g' | sort -u)
+
+build-em-part "$csomaglista"

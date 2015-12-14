@@ -1,0 +1,118 @@
+#!/bin/bash
+# A build-em-all nevű szkript elve szerint működő fordítási sorrend csoportokat megállapító szkript.
+# Beneneti paramétere egy csomagnév lista.
+# Kimeneti paraméterei a növekvő sorszámú ub csoportlisták.
+
+csomaglista="$@"
+outdir=build-em-part
+
+rm -rf $outdir
+mkdir -p "$outdir"
+cd "$outdir"
+mkdir -p allpkgs
+mkdir -p depend
+mkdir -p missing
+for i in $csomaglista ;do
+	source=$(apt-cache show "$i" | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g)
+	if [ -f allpkgs/$source ]; then
+	  continue
+	fi
+	echo "$source" > "allpkgs/$i"
+done
+echo ---------
+echo "Összesen $(echo ${csomaglista} | wc -w) darab újrafordítandó csomag van"
+echo "Az eredmény a $outdir könyvtárba kerül."
+echo ---------
+echo 'A csomagok építőköveinek rekurzív lekérdezése az apt gyorsítótárából'
+echo
+echo -n '    '
+letter=''
+# A depend könyvtárba rakja a csomagok neveivel elnevezett fájlokat
+# és ezekben felsorolja a csomagok buildinfójából, amiket a allpkgs mappában talál.
+# ha nem találja, akkor a missing mappába írja.
+for i in $csomaglista ;do
+		if [ "${i:0:1}" != "$letter" ]; then
+			letter="${i:0:1}"
+			echo -n "$letter"
+		fi
+		  source=$(apt-cache show "$i" | grep Source\: | sed s/Source\:" "//g | sort -u | tail -n 1 | sed s/_.*//g)
+		if [ -f "depend/$source" ]; then
+			continue
+		fi
+		for pkg in $(csomagko $i);do
+			if [ ! -f "allpkgs/$pkg" ]; then
+				touch "missing/$pkg"
+			else
+				echo "$(<"allpkgs/$pkg")"
+			fi
+		done > "depend/$source.tmp"
+		# Ideiglenes fájl kell, pipe nem jó, mert akkor a fenti kód
+		# subshellben fut, és az exit nem lép ki.
+		sort -u "depend/$source.tmp" > "depend/$source"
+		rm "depend/$source.tmp"
+done
+echo
+n=$(ls missing | wc -l)
+if [ $n -gt 0 ]; then
+	echo >&2
+	echo "    ***********************************************${n//?/*}****" >&2
+	echo "    *** Figyelem: $n egyéb építőkő van még!           ***"        >&2
+	echo "    *** Lásd a missing könyvtárat...               ${n//?/ } ***" >&2
+	echo "    ***********************************************${n//?/*}****" >&2
+	echo >&2
+else
+	rmdir missing
+fi
+
+echo -n "Phase 0 (bootstrap)... "
+echo
+# A depend könyvtárat átmásolja phase0 névvel.
+cp -a depend phase0
+mkdir remaining
+volt="1"
+prevnum=0
+num=$(ls phase0 | wc -l) # A phase0 tartalmának darabszáma
+while [ "$volt" == "1" ]; do # míg van átmozgatható függőségleíró
+	volt="0"
+	for pkg in `ls phase0`; do
+		if ! grep -qx "$pkg" phase0/*; then # ha a csomag neve nem szerepel a függőségek
+			mv "phase0/$pkg" remaining/ # megmaradó halmazában, akkor átmozgatja a remaining könyvtárba
+			volt="1"
+		fi
+	done
+done
+# A phase0 mappában olyanok maradtak, amelyekből minden elmozgatott építkezik
+cp -a phase0 done # A megmaradt leírókat tartalmazó phase0 mappa átmásolása done névvel
+echo $(ls phase0 | wc -l) csomag
+n=1
+while [ $(ls remaining | wc -l) != 0 ]; do
+	echo -n "Phase $n... "
+	mkdir phase$n
+	for i in remaining/*; do
+		ok=yes
+		while read pkg; do
+			if [ ! -f "done/$pkg" ]; then
+				ok=no
+				break
+			fi
+		done < "$i"
+		if [ $ok = yes ]; then
+			mv "$i" phase$n/
+		fi
+	done
+	cp -a phase$n/. done/
+	echo $(ls phase$n | wc -l) csomag
+	n=$((n+1))
+done
+rm -rf done
+rmdir remaining
+
+echo "ublisták készítése..."
+echo "az ublista0 tartalmát nem elég egyszer leforgatni!"
+n=0
+while [ -d phase$n ]; do
+	ls -1 phase$n >ublista$n 
+	n=$((n+1))
+done
+echo 'Kész.'
+
