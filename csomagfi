@@ -11,7 +11,12 @@ fi
 function fiak () {
 for num in "$@"; do
 verzio=$(apt-cache showpkg "$num" | grep -E ^[0-9.]+ | sed s/-.*//g | sort -V |tail -n 1)
-apt-cache showpkg "$num" | grep -E "$verzio$" | grep , |sed s/,\.*//g | sed 's/^ //g'
+fiak=$(apt-cache showpkg "$num" | grep -E "$verzio$" | grep , |sed s/,\.*//g | sed 's/^ *//g' | sort -u)
+for fiu in $fiak; do
+if [ $(csomagko $fiu | grep -E "^$num$") ];then
+echo $fiu
+fi
+done
 done
 }
 fiak "$@" | sort -u
