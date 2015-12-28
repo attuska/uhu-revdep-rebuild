@@ -111,7 +111,14 @@ echo "ublisták készítése..."
 echo "az ublista0 tartalmát nem elég egyszer leforgatni!"
 n=0
 while [ -d phase$n ]; do
-	ls -1 phase$n >ublista$n 
+	lista=$(ls -1 phase$n)
+	aktlista=""
+	for rl in $lista; do
+	szam=$(wc -l < phase$n/$rl)
+	aktlista=$(echo -e "$szam"xxyyzz"$rl"'\n'"$aktlista")
+	done
+	sorlista=$(echo "$aktlista" | sort -V | sed s/\[0-9]*xxyyzz//g)
+	echo "$sorlista" > ublista$n 
 	n=$((n+1))
 done
 echo 'Kész.'
