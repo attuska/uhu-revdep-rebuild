@@ -1,7 +1,16 @@
 #!/bin/bash -e
 
+# extrarelease fájl összegyűjtő szkript csomagok újrafordításához
+
+# Az ismert uhu csomag lelőhelyekről összegyűjti a paraméterlistában
+# megkapott csomagnevek aktuális extrarelease értékeit.
+# A lelőhejek prioritási sorrendje a $pkgcimek változóban felsoroltak sorrendjének
+# felel meg.
+
+echo " az aktuális extrarelease fájlok az exrarelease mappába kerülnek"
+
 function ftplista() {
-timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $1  | sed -r 's/^.*\/([^\/]+)\/?$/\1/'
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $1  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$
 }
 
 pkgcimek="
@@ -16,18 +25,30 @@ ftp://ftp.uhulinux.hu/uhu/3/packages/update/
 ftp://ftp.uhulinux.hu/uhu/3/packages/release/
 ftp://ftp.uhulinux.hu/uhu/3/packages/new/
 "
+rm -rf extrarelease cimek
+mkdir extrarelease cimek
+
+num=0
+for urlcim in $pkgcimek;do
+ftplista $urlcim > cimek/cim${num}
+num=$((num+1))
+done
 rm -rf extrarelease
 mkdir extrarelease
 
 for i in $@;do
-for urlcim in $pkgcimek;do
-if [ $(ftplista $urlcim | grep ^"$i"_) ]; then
-break
-fi
+n=0
+while [ -f cimek/cim$n ]; do
+	if  grep -q ^"$i"_ cimek/cim$n; then
+	  filenev=$(grep ^"$i"_ cimek/cim$n)
+	  break
+	fi
+      n=$((n+1))
 done
-filenev=$(ftplista $urlcim  | grep ^"$i"_)
 nev=$(echo $filenev | sed s/_i386.*//g)
 extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
 extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
+#echo "$filenev $extrareleasenev $extrarelease"
 echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
 done
+rm -rf cimek
