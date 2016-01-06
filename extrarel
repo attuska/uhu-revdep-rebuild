@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+function ftplista() {
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $1  | sed -r 's/^.*\/([^\/]+)\/?$/\1/'
+}
+
+pkgcimek="
+ftp://ftp.ubk.hu/pkg/3/main/
+ftp://ftp.ubk.hu/pkg/3/main/CINNAMON/
+ftp://ftp.ubk.hu/pkg/3/main/GNOME/
+ftp://ftp.ubk.hu/pkg/3/main/KDE/
+ftp://ftp.ubk.hu/pkg/3/main/MATE/
+ftp://ftp.ubk.hu/pkg/3/main/LXDE/
+ftp://ftp.ubk.hu/pkg/3/main/XFCE/
+ftp://ftp.uhulinux.hu/uhu/3/packages/update/
+ftp://ftp.uhulinux.hu/uhu/3/packages/release/
+ftp://ftp.uhulinux.hu/uhu/3/packages/new/
+"
+rm -rf extrarelease
+mkdir extrarelease
+
+for i in $@;do
+for urlcim in $pkgcimek;do
+if [ $(ftplista $urlcim | grep ^"$i"_) ]; then
+break
+fi
+done
+filenev=$(ftplista $urlcim  | grep ^"$i"_)
+nev=$(echo $filenev | sed s/_i386.*//g)
+extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
+extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
+echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
+done
