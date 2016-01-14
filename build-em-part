@@ -114,7 +114,7 @@ while [ -d phase$n ]; do
 	lista=$(ls -1 phase$n)
 	aktlista=""
 	for rl in $lista; do
-	szam=$(wc -l < phase$n/$rl)
+	szam=$(csomagko $rl | wc -l)
 	aktlista=$(echo -e "$szam"xxyyzz"$rl"'\n'"$aktlista")
 	done
 	sorlista=$(echo "$aktlista" | sort -V | sed s/\[0-9]*xxyyzz//g)
