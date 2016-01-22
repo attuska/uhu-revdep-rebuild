@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+workdir=/usr/src/UHUBUILD/UB-3
+celdir=$workdir/keszek
+forrdir=$workdir/forrasok
+faileddir=$workdir/failed
+sorrendfile=$workdir/ubrend
+debug=$1
+
+if [ ! -d $forrdir ]; then
+echo "Nincs $forrdir mappa, nincs tennivaló!"
+exit 1
+fi
+if [ ! -f $sorrendfile ]; then
+echo "Nincs $sorrendfile fájl, nincs tennivaló!"
+exit 1
+fi
+if [ ! -d $celdir ]; then
+mkdir -p $celdir
+fi
+if [ ! -d $faileddir ]; then
+mkdir -p $faileddir
+fi
+
+cd $workdir
+for i in `cat $sorrendfile`; do
+if [ -d $forrdir/$i ]; then
+mv $forrdir/$i ./
+
+if [ ! "$debug" ];then
+set +e
+build-3 -ns $i
+if [ $? -eq 2 ]; then
+mv $i $faileddir/
+else
+mv $i $celdir/
+fi
+set -e
+else
+build-3 -ns $i
+mv $i $celdir/
+fi
+fi
+done
