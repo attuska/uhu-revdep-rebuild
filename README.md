@@ -1,2 +1,2 @@
 # uhu-revdep-rebuild
-UHU-Linux build utilities for Packagers
+UHU-Linux build scripts for Packagers
