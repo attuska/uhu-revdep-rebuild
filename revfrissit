@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# UHU-3 -hoz felfrissíti az ub helyi tükreit.
+# A megadott frissítendő paraméterlista alapján
+# legyártja az ubsorrend fájlt és előhalássza az éppen elérhető
+# legfrissebb ubéke a $celdir mappába, ezekbe sources mappát is készít.
+# A csomagokhoz szükséges aktuális extrarelease fájlokat elkészíti
+# a $ereldir mappába
+
 ubtukor=/usr/src/UHUBUILD/gitt
 ubdir=$ubtukor/ub
 uboff=$ubtukor/ub-3-official
