@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+# Egy paraméterként megadott csomag mibenviltának lekérdezése
+#!! a bdeprak szkript lefuttatása után használható csak !!
+
+ubemappa=/usr/src/UHUBUILD/UB-UBK1/ub-ubk1/
+if [ -d $ubemappa$1 ];then
+leiras=$(cat $ubemappa$1/packages/$1/summary/hu)
+szekcio=$(cat $ubemappa$1/packages/$1/section)
+acquire=$(cat $ubemappa$1/acquire)
+echo "$1 -- $leiras"
+echo "$1 -- $szekcio"
+echo $acquire
+
+#echo "leszármazottak: $(csomagfi $1)"
+else
+echo "nincs $1 ub!"
+fi

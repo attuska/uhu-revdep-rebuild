@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# A paraméterkéntként megadott csomagot futási időben használó csomagok
+# vagyis amiknek a depends fájljában a paraméter szerepel
+#!! a bdeprak szkript lefuttatása után használható csak !!
+
+bdep=/usr/src/UHUBUILD/UB-UBK1/devanal/bdep
+rdep=/usr/src/UHUBUILD/UB-UBK1/devanal/rdep
+gittem=/usr/src/UHUBUILD/UB-UBK1/ub-ubk1
+
+grep ^$1$ $rdep/*

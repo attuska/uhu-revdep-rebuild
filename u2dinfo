@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# u2d információt adó szkript
+# Használata során bele kell lépni terminállal abba az mappába, melyben
+# az u2d, sourcename, version fájlok vannak.
+# Zölddel írja ki a verzót, ha azonos a version fájl tartalmával a megkapott érték, pirossal, ha más.
+
+nev=`cat sourcename`
+csomagolt=`cat version`
+u2dfile="%s \e[1;31mNincs u2d! \e[0m%s"
+if [ -f u2d ] ; then
+u2dfil=`uhubuild-u2d`
+if [ ! "$u2dfil" ]; then
+u2dfil=`uhubuild-u2d`
+fi
+if [ ! "$u2dfil" ]; then
+u2dfil=`uhubuild-u2d`
+fi
+if [ "$u2dfil" == "$csomagolt" ]; then
+u2dfile="%s \e[1;32m$u2dfil \e[0m%s"
+else
+u2dfile="%s \e[1;31m$u2dfil \e[0m%s"
+fi
+fi
+uzenet=`echo "$nev"" ""$csomagolt" "$u2dfile"`
+printf "%s $uzenet %s\n"
