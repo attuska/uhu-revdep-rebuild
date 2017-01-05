@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+# extrarelease fájl összegyűjtő szkript csomagok újrafordításához
+
+# A $pkgcimek változóban felsorolt ftp lelőhelyekről összegyűjti a paraméterlistában
+# megkapott csomagnevek aktuális extrarelease értékeit egy újonnan a munkakönyvtárban létrehozott
+# extrarelease mappába.
+# Az ide létrehozott fájlokat a /usr/src/UHUBUILD/misc-UBK1/extrarelease/ mappába másolva a build
+# rendszer már azokkal fog dolgozni és a létrejövő csomag extrarelease értéke nagyobb lesz az ftp-n találhatónál.
+# A lelőhelyek prioritási sorrendje a $pkgcimek változóban felsoroltak sorrendjének felel meg.
+
+echo " az aktuális extrarelease fájlok az exrarelease mappába kerülnek"
+
+function ftplista() {
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $1  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$
+}
+
+pkgcimek="
+ftp://ftp.ubk.hu/pkg/ubk1/main/
+"
+rm -rf extrarelease cimek
+mkdir extrarelease cimek
+
+num=0
+for urlcim in $pkgcimek;do
+ftplista $urlcim > cimek/cim${num}
+num=$((num+1))
+done
+rm -rf extrarelease
+mkdir extrarelease
+
+for i in $@;do
+n=0
+while [ -f cimek/cim$n ]; do
+	if  grep -q ^"$i"_ cimek/cim$n; then
+	  filenev=$(grep ^"$i"_ cimek/cim$n)
+	  break
+	fi
+      n=$((n+1))
+done
+nev=$(echo $filenev | sed s/_i386.*//g)
+extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
+extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
+#echo "$filenev $extrareleasenev $extrarelease"
+echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
+done
+rm -rf cimek
