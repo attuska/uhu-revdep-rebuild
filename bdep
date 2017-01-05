@@ -8,4 +8,8 @@ bdep=/usr/src/UHUBUILD/UB-UBK1/devanal/bdep
 rdep=/usr/src/UHUBUILD/UB-UBK1/devanal/rdep
 gittem=/usr/src/UHUBUILD/UB-UBK1/ub-ubk1
 
+if [ -d $bdep ];then
 grep ^$1$ $bdep/* | sed s/:.*//g | sed s%.*\/%%g
+else
+echo "Nincs $bdep mappa, ezt a bdep szkript hozza létre!"
+fi
