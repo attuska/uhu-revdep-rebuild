@@ -45,3 +45,6 @@ Régebbi újrafordítandó cuccokat összegyűjtő szkriptem.
 
 u2dinfo
 A csomag frissíthetőségét kérdezi le, annak u2d fájljának alapján.
+
+ubkgittbe
+A fordítás után az elkészült csomagok githubra történő committolását segíti elő.

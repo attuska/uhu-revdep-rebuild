@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Az elkészült csomagok ubéit elhelyezi a helyi github tükörbe, utána kiíratja a github státuszt.
+# A státusz ellenőrzése után mehet a commit és a push.
+# használható az ubk1, uhu3 és uhu2.2 helyi tükreinél is.
+
+gittem=`pwd`
+if [ ! -d .gitt ];then
+echo "A $gittem nem git tároló tükör!"
+exit 1
+fi
+git pull
+ubeim=/usr/src/UHUBUILD/packages-$(echo $gittem | sed s/.*-//g | tr [:lower:] [:upper:])/ub
+ubek=$(ls -1 $ubeim)
+csomagok=$(echo $ubek | sed s/_ub\.tar\.gz//g)
+rm -rf $csomagok
+for i in $ubek;do
+tar xf $ubeim/$i -C $gittem/
+done
+git add $csomagok
+git status
