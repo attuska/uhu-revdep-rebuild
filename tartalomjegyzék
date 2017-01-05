@@ -1,0 +1,47 @@
+aptextrarel
+Az apt-cache alapján extrarelease fájlokat készít.
+
+curlubk1extrarel
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít.
+
+bdeprak
+Az ub helyi tükörből kivonatol a bdep, rdep és miez részére.
+
+bdep
+Felsorolja azon csomagokat, amelyek build-depends fájlában a paraméter szerepel.
+
+miez
+Felsorolja a csomag alapvető tulajdonságait.
+
+rdep
+Felsorolja azon csomagokat, amelyek depends fájlában a paraméter szerepel.
+
+build-depends-fix
+A build-depends fájl zsugorítója az apt-cache alapján.
+
+build-em-part
+A build-em-all szkript apt-cache változata
+
+csomagfi
+A paraméter csomag leszármazottai az apt-cache alapján.
+
+csomagko
+A paraméter csomag építőkövei az apt-cache alapján.extrarel
+
+rebuild-rendez
+Fordítandó csomaghalmaz fordítási sorrendje az apt-cache alapján.
+
+revdep
+Paraméter csomaghalmaz többmélységű függőségi vizsgálata az apt-cache alapján. A revdep rebuild használja.
+
+revdep-rebuild
+A paraméter csomagok miatt újrafordítandó csomagok listája fordítási sorrendben az apt-cache alapján.
+
+revfordit
+Sorozatfordítást végző szkript egy ubrend fájl alapján.
+
+revfrissit
+Régebbi újrafordítandó cuccokat összegyűjtő szkriptem.
+
+u2dinfo
+A csomag frissíthetőségét kérdezi le, annak u2d fájljának alapján.
