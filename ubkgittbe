@@ -5,7 +5,7 @@
 # használható az ubk1, uhu3 és uhu2.2 helyi tükreinél is.
 
 gittem=`pwd`
-if [ ! -d .gitt ];then
+if [ ! -d .git ];then
 echo "A $gittem nem git tároló tükör!"
 exit 1
 fi
