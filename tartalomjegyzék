@@ -32,7 +32,7 @@ rebuild-rendez
 Fordítandó csomaghalmaz fordítási sorrendje az apt-cache alapján.
 
 revdep
-Paraméter csomaghalmaz többmélységű függőségi vizsgálata az apt-cache alapján. A revdep rebuild használja.
+Paraméter csomaghalmaz függőségi vizsgálata az apt-cache alapján, a build-em-all elvén, a build-em part indítója.
 
 revdep-rebuild
 A paraméter csomagok miatt újrafordítandó csomagok listája fordítási sorrendben az apt-cache alapján.
