@@ -8,36 +8,48 @@
 # mappába és veszi a következő ubrend elemét.
 # Ha nem sikerül a fordítás és volt parancssori paraméter, akkor leáll a szkript.
 
-workdir=/usr/src/UHUBUILD/UB-3
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-\|UBK1$\|2.2$\|3$\|dev$' | sed s/.*-//)
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+exit 1
+fi
+
+workdir=`pwd`
 celdir=$workdir/keszek
 forrdir=$workdir/forrasok
 faileddir=$workdir/failed
 sorrendfile=$workdir/ubrend
+pkgdir=/usr/src/UHUBUILD/packages-$diszt
 debug=$1
 
-if [ ! -d $forrdir ]; then
-echo "Nincs $forrdir mappa, nincs tennivaló!"
+if [ ! -f $sorrendfile ];then
+echo "Nincs $sorrendfile fordítási sorrend fájl!"
 exit 1
 fi
-if [ ! -f $sorrendfile ]; then
-echo "Nincs $sorrendfile fájl, nincs tennivaló!"
-exit 1
+# Mappagyártás, ha nincs
+if [ -d $forrdir ];then
+mkdir -p $forrdir
 fi
-if [ ! -d $celdir ]; then
+if [ -d $celdir ];then
 mkdir -p $celdir
 fi
-if [ ! -d $faileddir ]; then
+if [ -d $faileddir ];then
 mkdir -p $faileddir
 fi
 
-cd $workdir
 for i in `cat $sorrendfile`; do
 if [ -d $forrdir/$i ]; then
 mv $forrdir/$i ./
-
+# sources mappa kell
+mkdir -p $i/sources
+# Hash-sum hiba megelőzése
+cd $pkgdir >/dev/null
+rm -f Packages*
+uhu-scanpkgs
+cd - /dev/null
 if [ ! "$debug" ];then
 set +e
-build-3 -ns $i
+build-$diszt -ns $i
 if [ $? -eq 2 ]; then
 mv $i $faileddir/
 else
@@ -50,3 +62,4 @@ mv $i $celdir/
 fi
 fi
 done
+echo "A $forrdir mappa üres"
