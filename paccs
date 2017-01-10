@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Az orig és mod mappák tartalmáról a paraméterév.patch foltot hoz létre
+if [ -z "$1" ]; then
+echo paraméter kell;
+exit 1
+fi
+if [ ! -d orig ]; then
+echo orig könyvtár nincs
+exit 1
+fi
+if [ ! -d mod ]; then
+echo mod könyvtár nincs
+exit 1
+fi
+diff -Nur orig mod > "$1".patch
