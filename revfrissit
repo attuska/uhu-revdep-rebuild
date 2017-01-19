@@ -1,48 +1,41 @@
 #!/bin/bash
 
-# UHU-3 -hoz felfrissíti az ub helyi tükreit.
+# UHU-3/2.2/RIA -hoz felfrissíti az ub helyi tükreit.
 # A megadott frissítendő paraméterlista alapján
 # legyártja az ubsorrend fájlt és előhalássza az éppen elérhető
 # legfrissebb ubéke a $celdir mappába, ezekbe sources mappát is készít.
 # A csomagokhoz szükséges aktuális extrarelease fájlokat elkészíti
 # a $ereldir mappába
 
-ubtukor=/usr/src/UHUBUILD/gitt
-ubdir=$ubtukor/ub
-uboff=$ubtukor/ub-3-official
-celdir=/usr/src/UHUBUILD/UB-3/forrasok
-ereldir=/usr/src/UHUBUILD/UB-3/extrareleasemappa
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-\|UBK1$\|2.2$\|3$\|dev$' | sed s/.*-//)
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+exit 1
+fi
+workdir=`pwd`
+ubtukor=/usr/src/UHUBUILD/ubgit
+
+celdir=$workdir/forrasok
+ereldir=$workdir/extrareleasemappa
+ubdir=$ubtukor/ub-$diszt
 
 rm -rf $ereldir $celdir
 mkdir -p $ereldir $celdir
 
 if [ ! -d $ubtukor ]; then
-echo "A $ubtukor könyvtár létrehozása"
 mkdir -p $ubtukor
 fi
-
 if [ ! -d $ubdir ]; then
 echo "A $ubdir klónozása"
 cd $ubtukor
-git clone https://github.com/uhulinux/ub
+git clone https://github.com/uhulinux/ub-$diszt
 cd - > /dev/null
-fi
-
-if [ ! -d $uboff ]; then
-echo "A $uboff klónozása"
-cd $ubtukor
-git clone https://github.com/uhulinux/ub-3-official
-cd - > /dev/null
-fi
-
-# tükör frissítés
-echo "Az ub helyi tükrök frissítése"
+else
+echo "A $ubdir frissítése"
 cd $ubdir
 git pull
-cd -> /dev/null
-cd $uboff
-git pull
 cd - > /dev/null
+fi
 
 revdep-rebuild 1 "$@"
 echo A lefordítandó csomagok; echo
@@ -51,11 +44,7 @@ echo  $i
 if [ -d $ubdir/$i ]; then
 cp -r $ubdir/$i $celdir/
 else
-if [ -d $uboff/$i ]; then
-cp -r $uboff/$i $celdir/
-else
 echo "nincs ""$i"" könyvtár"
-fi
 fi
 
 if [ ! -d $celdir/$i/sources ]; then
@@ -72,4 +61,4 @@ done
 
 echo ; echo "A lefordítandó csomagok legfrissebb ubéi a $celdir mappában vannak."
 echo "A csomagok extrarelease fájljai a $ereldir mappában vannak."
-echo "A fordítási sorrend a ./ubsorrend fájl szerint ajánlott."
+echo "A fordítási sorrend a ./ubrend fájl szerint ajánlott."
