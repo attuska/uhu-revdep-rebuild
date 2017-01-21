@@ -1,0 +1,43 @@
+#!/bin/bash
+# Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
+
+if [ ! "$1" ] || [ ! "$2" ]; then
+	echo 'Használat: frissgyujt <listafájl> <ubgitútvonal>' >&2
+	exit 1
+fi
+
+listafile=$1
+gitdir=$2
+workdir=`pwd`
+
+if [ ! -d $gitdir ];then
+echo "Nincs $gitdir mappa!" >&2
+exit 1
+fi
+
+if [ ! -f $1 ];then
+        echo "nincs $1 listafájl!" >&2
+        exit 1
+fi
+
+rm -f $listafile-uj $listafile-ujnevek
+
+for i in `cat $workdir/$listafile`;do
+    if [ -d $gitdir/$i ]; then
+        echo $i
+        cd $gitdir/$i
+        over=$(cat version)
+        ujver=$(uhubuild-u2d)
+        if [ ! "$over" == "$ujver" ];then
+            echo "$i $over -> $ujver" >>$workdir/$listafile-uj
+#            echo $i >>$workdir/$listafile-ujnevek
+        fi
+        cd - > /dev/null
+    fi
+done
+echo
+if [ -f $listafile-uj ];then
+echo "A frissíthető csomagok a $listafile-uj fájlban vannak felsorolva."
+else
+echo "Nincs frissíthető csomag."
+fi
