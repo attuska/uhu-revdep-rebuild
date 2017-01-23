@@ -1,7 +1,7 @@
 aptextrarel
 Az apt-cache alapján extrarelease fájlokat készít.
 
-curlubk1extrarel
+curlextrarel
 Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít.
 
 bdeprak
@@ -48,3 +48,6 @@ A csomag frissíthetőségét kérdezi le, annak u2d fájljának alapján.
 
 ubkgittbe
 A fordítás után az elkészült csomagok githubra történő committolását segíti elő.
+
+frissgyujt
+A paraméter csomaglista alapján a frissíthető csomagokról készít listát
