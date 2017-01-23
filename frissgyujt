@@ -15,7 +15,7 @@ echo "Nincs $gitdir mappa!" >&2
 exit 1
 fi
 
-if [ ! -f $1 ];then
+if [ ! -f $listafile ];then
         echo "nincs $listafile listafájl!" >&2
         exit 1
 fi
