@@ -2,12 +2,12 @@
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
 
 if [ ! "$1" ] || [ ! "$2" ]; then
-	echo 'Használat: frissgyujt <listafájl> <ubgitútvonal>' >&2
+	echo 'Használat: frissgyujt  <ubgitútvonal> <listafájl>' >&2
 	exit 1
 fi
 
-listafile=$1
-gitdir=$2
+listafile=$2
+gitdir=$1
 workdir=`pwd`
 
 if [ ! -d $gitdir ];then
@@ -16,7 +16,7 @@ exit 1
 fi
 
 if [ ! -f $1 ];then
-        echo "nincs $1 listafájl!" >&2
+        echo "nincs $listafile listafájl!" >&2
         exit 1
 fi
 

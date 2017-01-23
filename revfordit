@@ -57,9 +57,9 @@ mv $i $celdir/
 fi
 set -e
 else
-build-3 -ns $i
+build-$diszt -ns $i
 mv $i $celdir/
 fi
 fi
 done
-echo "A $forrdir mappa üres"
+echo "A $forrdir mappa nem tartalmaz fordítható elemet."
