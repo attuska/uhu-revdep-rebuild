@@ -16,10 +16,14 @@ fi
 if [ ! "$u2dfil" ]; then
 u2dfil=`uhubuild-u2d`
 fi
+if [ "$(echo $u2dfil | grep noupdate)" ];then
+u2dfile="%s \e[1;34m$u2dfil \e[0m%s"
+else
 if [ "$u2dfil" == "$csomagolt" ]; then
 u2dfile="%s \e[1;32m$u2dfil \e[0m%s"
 else
 u2dfile="%s \e[1;31m$u2dfil \e[0m%s"
+fi
 fi
 fi
 uzenet=`echo "$nev"" ""$csomagolt" "$u2dfile"`
