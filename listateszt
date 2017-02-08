@@ -1,0 +1,29 @@
+#!/bin/bash
+#leteszteli terminálban a listafájlban felsorolt csomagok frissíthetőségét
+
+if [ ! "$1" ] || [ ! "$2" ]; then
+	echo 'Használat: listateszt  <ubgitútvonal> <listafájl>' >&2
+	exit 1
+fi
+
+listafile=$2
+gitdir=$1
+workdir=`pwd`
+
+if [ ! -d $gitdir ];then
+echo "Nincs $gitdir mappa!" >&2
+exit 1
+fi
+
+if [ ! -f $listafile ];then
+        echo "nincs $listafile listafájl!" >&2
+        exit 1
+fi
+
+
+for i in `cat $listafile`;do
+if [ -d $gitdir/$i ]; then
+cd $gitdir/$i >/dev/null
+u2dinfo
+fi
+done
