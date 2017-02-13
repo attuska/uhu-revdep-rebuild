@@ -26,7 +26,8 @@ csomagfi
 A paraméter csomag leszármazottai az apt-cache alapján.
 
 csomagko
-A paraméter csomag építőkövei az apt-cache alapján.extrarel
+A paraméter csomag építőkövei az apt-cache alapján.
+
 
 rebuild-rendez
 Fordítandó csomaghalmaz fordítási sorrendje az apt-cache alapján.
@@ -51,3 +52,6 @@ A fordítás után az elkészült csomagok githubra történő committolását s
 
 frissgyujt
 A paraméter csomaglista alapján a frissíthető csomagokról készít listát
+
+listateszt
+Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből frissíthetőség lekérdezése
