@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+# Egy paraméterként megadott csomag mibenviltának lekérdezése
+#!! a bdeprak szkript lefuttatása után használható csak !!
+
+echo "A $1 leírása"
+echo
+miez $1
+echo
+echo "A $1 build-depends fájlja"
+echo
+builddep $1
+echo
+echo "A $1 a következők build-depends fájljában szerepel"
+echo
+bdep $1
+echo
+echo "A $1 a következők depends fájljában szerepel"
+echo
+rdep $1
+echo
+echo cache rdeps...
+echo
+apt-cache rdepends $1 | sort -u | sed "/^$1$/d" | sed /Reverse/d | sed 's/^ *//g'
+echo
+echo cache depends...
+echo
+apt-cache depends $1 | sed "/^$1$/d" | sed s/.*ettől:.//g
