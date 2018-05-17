@@ -18,12 +18,10 @@ if [ ! "$2" ];then
 	exit 1
 fi
 echo " Az aktuális extrarelease fájlok az exrarelease mappába kerülnek."
-        curlcim=ftp://ftp.ubk.hu/pkg/UBK$1/main/amd64/
+        curlcim=ftp://ftp.ubk.hu/pkg/UBK$1/main/i386/
 rm -rf extrarelease cimek
 mkdir extrarelease cimek
 rm -f csomaglista
-
-timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > csomaglista
 
 # disztrib paraméter kiszedése a paraméterlistából
 frisscsomagok=""
@@ -32,13 +30,14 @@ for num in "$@" ; do
   frisscsomagok=$(echo -e "$frisscsomagok"'\n'"$num")
   fi
 done
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > csomaglista
 
 for i in $frisscsomagok;do
-    filenev=$(grep ^"${i}"_ csomaglista)
-    echo $filenev
-    nev=$(echo $filenev | sed s/_amd64.*//g)
-    extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
-    extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
-    #echo "$filenev $extrareleasenev $extrarelease"
-    echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
+	  filenev=$(grep ^"$i"_ csomaglista)
+nev=$(echo $filenev | sed s/_i386.*//g)
+extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
+extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
+#echo "$filenev $extrareleasenev $extrarelease"
+echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
 done
+rm -f csomaglista

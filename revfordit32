@@ -46,7 +46,7 @@ for i in `cat $sorrendfile`; do
         fi
         if [ ! "$debug" ];then
             set +e
-            build-$diszt -ns $i
+            build-$diszt -ns -32 $i
             if [ $? -eq 2 ]; then
                 mv $i $faileddir/
             else
@@ -54,7 +54,7 @@ for i in `cat $sorrendfile`; do
             fi
             set -e
         else
-            build-$diszt -ns $i
+            build-$diszt -ns -32 $i
             mv $i $celdir/
         fi
     fi

@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+# Az ubrend fájl sorrendje alapján elvégzi a fordítást a forrasok mappába elhelyezett
+# ubék használatával. Ha talál az ubrend fájlban felsorolt mappát, akkor azt a fordítási mappába helyezi,
+# majd elvégzi a fordítást. Ha sikeres, akkor áthelyezi ezt a mappát a keszek mappába, és próbálkozik az
+# ubrend fájlban lévő következő elemmel.
+# Ha nem sikerül a fordítás és nem kapott a szkript parancssori paramétert, akkor áthelyezi ezt a mappát a failed
+# mappába és veszi a következő ubrend elemét.
+# Ha nem sikerül a fordítás és volt parancssori paraméter, akkor leáll a szkript.
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+exit 1
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+echo "build-$kisdiszt"
+build-$kisdiszt -ns -32 $1

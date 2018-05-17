@@ -2,7 +2,10 @@ aptextrarel
 Az apt-cache alapján extrarelease fájlokat készít.
 
 curlextrarel
-Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít.
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít. (64 bit)
+
+curlextrarel32
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít. (32 bit)
 
 bdeprak
 Az ub helyi tükörből kivonatol a bdep, rdep és miez részére.
@@ -39,7 +42,10 @@ revdep-rebuild
 A paraméter csomagok miatt újrafordítandó csomagok listája fordítási sorrendben az apt-cache alapján.
 
 revfordit
-Sorozatfordítást végző szkript egy ubrend fájl alapján.
+64 bites sorozatfordítást végző szkript egy ubrend fájl alapján
+
+revfordit32
+32 bites sorozatfordítást végző szkript egy ubrend fájl alapján
 
 revfrissit
 Régebbi újrafordítandó cuccokat összegyűjtő szkriptem.
@@ -59,3 +65,8 @@ Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből
 mi
 paraméter csomag tulajdonságainak gyors lekérdezése.
 
+fordit
+A fordítási mappából indítva a csomagot elkészíti a fordítási mappa szerinti disztribúcióra 64 bitesre
+
+fordit32
+A fordítási mappából indítva a csomagot elkészíti a fordítási mappa szerinti disztribúcióra 32 bitesre
