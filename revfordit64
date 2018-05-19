@@ -7,6 +7,7 @@
 # Ha nem sikerül a fordítás és nem kapott a szkript parancssori paramétert, akkor áthelyezi ezt a mappát a failed
 # mappába és veszi a következő ubrend elemét.
 # Ha nem sikerül a fordítás és volt parancssori paraméter, akkor leáll a szkript.
+# nem minden disztribúciónál alapértelmezett a 64 bit.
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
@@ -54,7 +55,7 @@ for i in `cat $sorrendfile`; do
             fi
             set -e
         else
-            build-$diszt -ns $i
+            build-$diszt -ns -64 $i
             mv $i $celdir/
         fi
     fi

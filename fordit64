@@ -17,4 +17,4 @@ fi
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
 echo "build-$kisdiszt"
-build-$kisdiszt -ns $1
+build-$kisdiszt -ns -64 $1

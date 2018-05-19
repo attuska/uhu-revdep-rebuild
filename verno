@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# u2d alapján módosítja a $workdirben lévő ubék version fájját, ha az elérhető verzió más.
+# más, mint az eredit, akkor a release fájl értékét 1 -re állítja
+# sources mappát készít, ha az nem lenne
+
+workdir=forrasok
+
+if [ ! -d $workdir ];then
+echo "Nincs $workdir mappa!"
+exit 1
+fi
+
+for i in `ls -1 $workdir`;do
+        echo "forrás: $i"
+        cd $workdir/$i
+        # ha nem lenne
+        mkdir -p sources
+        over=$(cat version)
+        ujver=$(uhubuild-u2d)
+        if [ ! "$ujver" ];then
+        ujver=$(uhubuild-u2d)
+        fi
+        if [ ! "$ujver" ];then
+        echo "A $i ub u2d fájlja hibás!"
+        break
+        fi
+        if [ ! "$over" == "$ujver" ];then
+            echo "$i $over -> $ujver"
+            echo $ujver >version
+            echo 1 >release
+        fi
+        cd - > /dev/null
+done
