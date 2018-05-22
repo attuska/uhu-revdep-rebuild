@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# a helyi repót aláírja
+diszt=$(pwd | sed s/.*packages-// | sed s/\\/.*//)
+if [ -f Release ];then
+diszt=$(cat Release | grep Version | sed 's/Version: //')
+fi
+arch=$(pwd | sed s/.*\\///)
+if [ $arch = amd64 ] || [ $arch = i386 ];then
+rm -f Release*
+rm -f Packages*
+echo "uhu-reposign $diszt $arch"
+uhu-reposign $diszt $arch
+else
+echo "Csak i386 és amd64 mappában futtatható"
+fi
+
+
