@@ -2,20 +2,38 @@
 
 # Az elkészült csomagok ubéit elhelyezi a helyi github tükörbe, utána kiíratja a github státuszt.
 # A státusz ellenőrzése után mehet a commit és a push.
-# használható az ubk1, uhu3 és uhu2.2 helyi tükreinél is.
+# használható az ubk1, ubk2 és ubk3 github helyi tükreinél is.
 
-gittem=`pwd`
-if [ ! -d .git ];then
-echo "A $gittem nem git tároló tükör!"
+workdir=`pwd`
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 exit 1
 fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+keszdir=$workdir/keszek
+if [ ! -d $keszdir ];then
+echo "Nincs $keszdir !"
+exit 1
+fi
+
+ubdir=~/gittek/ubk/$kisdiszt
+if [ ! -d $ubdir ];then
+echo "Nincs klónozott $ubdir !"
+exit 1
+fi
+
+cd $ubdir
 git pull
-ubeim=/usr/src/UHUBUILD/packages-$(echo $gittem | sed s/.*-//g | tr [:lower:] [:upper:])/ub
-ubek=$(ls -1 $ubeim)
-csomagok=$(echo $ubek | sed s/_ub\.tar\.gz//g)
-rm -rf $csomagok
-for i in $ubek;do
-tar xf $ubeim/$i -C $gittem/
+
+for i in `ls -1 $keszdir`;do
+rm -rf $i
+cp -r $keszdir/$i ./
+rm -rf $i/sources
+git add $i
 done
-git add $csomagok
+
 git status
+cd -
