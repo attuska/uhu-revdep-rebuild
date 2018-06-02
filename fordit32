@@ -1,12 +1,11 @@
 #!/bin/bash -e
 
-# Az ubrend fájl sorrendje alapján elvégzi a fordítást a forrasok mappába elhelyezett
-# ubék használatával. Ha talál az ubrend fájlban felsorolt mappát, akkor azt a fordítási mappába helyezi,
-# majd elvégzi a fordítást. Ha sikeres, akkor áthelyezi ezt a mappát a keszek mappába, és próbálkozik az
-# ubrend fájlban lévő következő elemmel.
-# Ha nem sikerül a fordítás és nem kapott a szkript parancssori paramétert, akkor áthelyezi ezt a mappát a failed
-# mappába és veszi a következő ubrend elemét.
-# Ha nem sikerül a fordítás és volt parancssori paraméter, akkor leáll a szkript.
+# A paraméter ubét lefordítja 32 bitre
+
+if [ $# = 0 ]; then
+	echo 'Paraméterként fordítandó cucc kell' >&2
+	exit 1
+fi
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
