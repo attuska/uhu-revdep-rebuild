@@ -76,3 +76,6 @@ A fordítási mappából indítva a csomagot elkészíti a fordítási mappa sze
 
 verno
 A sources mappában lévő ubékbe sources mappát rak, ha nem lenne, az u2d alapján frissíti a version fájlt, ha más lesz, mint az eredeti volt, akkor a release féjlt 1-re állítja.
+
+fedoragit
+A fedora git tárolót klónozza
