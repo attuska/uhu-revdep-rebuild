@@ -19,7 +19,7 @@ echo "Nincs $keszdir !"
 exit 1
 fi
 
-ubdir=~/gittek/ubk/$kisdiszt
+ubdir=~/gittek/ubk/ub-$kisdiszt
 if [ ! -d $ubdir ];then
 echo "Nincs klónozott $ubdir !"
 exit 1
