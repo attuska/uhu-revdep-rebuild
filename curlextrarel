@@ -1,44 +1,61 @@
 #!/bin/bash -e
 
-# Extrarelease fájlok összegyűjtő szkriptje csomagok újrafordításához.
+# Extrarelease fájlok összegyűjtő szkriptje csomaghalmaz újrafordításához.
 
-# Az első paraméterben megadott disztribúciónak megfelelő ftp lelőhelyről összegyűjti a 
-# megadott csomagnevek aktuális extrarelease értékeit egy újonnan a munkakönyvtárban létrehozott extrarelease mappába.
-# Az ide létrehozott fájlokat a /usr/src/UHUBUILD/misc-UBK1/extrarelease/ mappába másolva a build
+# Az első paraméterben megadott architektúrának megfelelő ftp lelőhelyről összegyűjti a 
+# megadott csomagnevek aktuális extrarelease értékeit egy újonnan a munkakönyvtárban létrehozott mappába.
+# Az ide létrehozott fájlokat a /usr/src/UHUBUILD/ megfelelő mappájába másolva a build
 # rendszer már azokkal fog dolgozni és a létrejövő csomag extrarelease értéke nagyobb lesz az ftp-n találhatónál.
 
-if [ ! "$(echo $1 | grep '^1$\|^2$\|^3$')" ]; then
-    echo "Nem jó a $1 disztribúció paraméter"
-    echo 'Használat: curlextrarel <1|2|3> <csomagsorozat> ' >&2
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+exit 1
+fi
+
+if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
+    echo "Nem jó a $1 architektúra paraméter"
+    echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> ' >&2
 	exit 1
 fi
+
 if [ ! "$2" ];then
     echo "Nincs megadva egy csomag sem!"
-    echo 'Használat: curlextrarel <1|2|3> <csomagsorozat> ' >&2
+    echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> ' >&2
 	exit 1
 fi
-echo " Az aktuális extrarelease fájlok az exrarelease mappába kerülnek."
-        curlcim=ftp://ftp.ubk.hu/pkg/UBK$1/main/amd64/
-rm -rf extrarelease cimek
-mkdir extrarelease cimek
-rm -f csomaglista
 
-timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > csomaglista
+arch=$1
+erelmappa=erel-${arch}
 
-# disztrib paraméter kiszedése a paraméterlistából
-frisscsomagok=""
-for num in "$@" ; do
-  if [ ! $num == $1 ]; then
-  frisscsomagok=$(echo -e "$frisscsomagok"'\n'"$num")
-  fi
+# csak a csomaghalmaz kell a paraméterlistából
+csomaghalmaz=""
+for csomag in "$@" ; do
+    if [ ! $csomag == $1 ]; then
+        csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
+    fi
 done
 
-for i in $frisscsomagok;do
-    filenev=$(grep ^"${i}"_ csomaglista)
+curlcim=ftp://ftp.ubk.hu/pkg/${diszt}/main/${arch}/
+
+# takarítások
+rm -f tmpfile
+rm -rf $erelmappa
+mkdir $erelmappa
+
+echo " Az aktuális extrarelease fájlok az $erelmappa mappába kerülnek."
+
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > tmpfile
+
+for i in $csomaghalmaz;do
+    filenev=$(grep ^"${i}"_ tmpfile)
     echo $filenev
-    nev=$(echo $filenev | sed s/_amd64.*//g)
+    nev=$(echo $filenev | sed "s/_$arch.*//g")
     extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
     extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
     #echo "$filenev $extrareleasenev $extrarelease"
-    echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
+    echo -e $extrarelease'\n' > $erelmappa/$extrareleasenev
 done
+# takarítás
+rm -f tmpfile
