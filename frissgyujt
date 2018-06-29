@@ -1,25 +1,46 @@
 #!/bin/bash
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
 
-if [ ! "$1" ] || [ ! "$2" ]; then
-	echo 'Használat: frissgyujt  <ubgitútvonal> <listafájl>' >&2
+function hasznalat () {
+	echo 'Használat: frissgyujt <listafájl>' >&2
 	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! "$1" ]; then
+    hasznalat
 fi
 
-listafile=$2
-gitdir=$1
+if [ ! $diszt ];then
+    echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hasznalat
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
+gitdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gitdir ];then
-echo "Nincs $gitdir mappa!" >&2
-exit 1
+    echo "Nincs klónozott $gitdir !"
+    hasznalat
 fi
 
+
+listafile=$1
 if [ ! -f $listafile ];then
-        echo "nincs $listafile listafájl!" >&2
-        exit 1
+    echo "nincs $listafile listafájl!" >&2
+    hasznalat
 fi
 
+echo "A $gitdir frissítése"
+cd $gitdir >/dev/null
+git pull
+cd - >/dev/null
+
+frissmappa=friss-$listafile
+rm -rf $frissmappa
+mkdir -p $frissmappa
 rm -f $listafile-uj $listafile-ujnevek
 
 for i in `cat $workdir/$listafile`;do
@@ -29,6 +50,7 @@ for i in `cat $workdir/$listafile`;do
         over=$(cat version)
         ujver=$(uhubuild-u2d)
         if [ ! "$over" == "$ujver" ];then
+            cp -a $gitdir/$i $workdir/$frissmappa
             echo "$i $over -> $ujver" >>$workdir/$listafile-uj
 #            echo $i >>$workdir/$listafile-ujnevek
         fi
@@ -38,6 +60,7 @@ done
 echo
 if [ -f $listafile-uj ];then
 echo "A frissíthető csomagok a $listafile-uj fájlban vannak felsorolva."
+echo "A frissíthető ubék a $workdir/$frissmappa mappában vannak"
 else
 echo "Nincs frissíthető csomag."
 fi
