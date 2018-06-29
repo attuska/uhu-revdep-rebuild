@@ -68,11 +68,8 @@ Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből
 mi
 paraméter csomag tulajdonságainak gyors lekérdezése.
 
-fordit64
-A fordítási mappából indítva a csomagot elkészíti a fordítási mappa szerinti disztribúcióra 64 bitesre
-
-fordit32
-A fordítási mappából indítva a csomagot elkészíti a fordítási mappa szerinti disztribúcióra 32 bitesre
+fordit
+A fordítási mappából indítva a csomagot elkészíti a fordítási mappa szerinti disztribúcióra alapértelmezetten 64 bitesre, 3 paraméterként megadva a 32 -t, 32 bitesre
 
 verno
 A sources mappában lévő ubékbe sources mappát rak, ha nem lenne, az u2d alapján frissíti a version fájlt, ha más lesz, mint az eredeti volt, akkor a release féjlt 1-re állítja.

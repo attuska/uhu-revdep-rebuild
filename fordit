@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+echo "Használat: fordit <ub> [32]"
+echo "32 bites fordításhoz kell 3. paraméterként a 32 megadása"
+exit 1
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+ub=$1
+if [ "$2" == "32" ];then
+    arch="32"
+else
+    arch="64"
+fi
+
+if [ ! -d $ub ];then
+echo "Nincs $ub ub"
+exit 1
+fi
+
+echo "A $ub ub $arch bites fordítása..."
+
+build-$kisdiszt -ns -$arch $ub
+
