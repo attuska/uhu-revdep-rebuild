@@ -10,6 +10,9 @@ Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít az ö
 curlextrarel
 Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít csomagsorozat szerint.
 
+catbegyujt
+A paraméterként megadott fájlban felsorolt ubéket elhelyezi a paraméter-ub nevű mappába
+
 bdeprak
 Az ub helyi tükörből kivonatol a bdep, rdep és miez részére.
 
