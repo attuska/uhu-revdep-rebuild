@@ -1,0 +1,60 @@
+#!/bin/bash
+# Összegyűjti a listamappa mappában frissítendő lévő ubék miatt újraforgatandó ubéket az ujrakell mappába.
+#
+
+function hiba () {
+    echo $string
+	echo 'Használat: fugggyujt <listamappa>' >&2
+	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+workdir=`pwd`
+gitdir=~/gittek/ubk/ub-$kisdiszt
+forrdir=$1
+
+if [ ! $diszt ];then
+    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hiba
+fi
+
+if [ ! "$1" ];then
+    hiba
+fi
+
+if [ ! -d $forrdir ];then
+    string="Nincs $forrdir mappa"
+    hiba
+fi
+
+if [ ! -d $gitdir ];then
+    string="Nincs klónozott $gitdir !"
+    hiba
+fi
+
+echo "A $gitdir frissítése"
+cd $gitdir >/dev/null
+git pull
+cd - >/dev/null
+
+ujrakell=ujraforditani
+rm -rf $ujrakell
+mkdir -p $ujrakell
+
+
+for i in `ls -1 $forrdir`;do
+    for j in `ls -1 $forrdir/$i/packages/`;do
+        csomi=$(grep ^$j$ $gitdir/*/build-depends | sed s/\\/build-depends.*//g | sed "s|$gitdir\/||g")
+        if [ "$csomi" ];then
+            for csom in $csomi;do
+                if [ ! -d "$forrdir/$csom" ];then
+                    cp -a $gitdir/$csom $ujrakell/
+                fi
+            done
+        fi
+    done
+done
+echo "Az újrafordítandó ubék a $ujrakell mappában vannak"
+echo "Ennek tartalma:"
+ls -1 $ujrakell

@@ -62,6 +62,9 @@ A fordítás után az elkészült csomagok githubra történő committolását s
 frissgyujt
 A paraméter csomaglista alapján a frissíthető csomagokról készít listát
 
+fugggyujt
+A paraméter frissített csomagok ubéit tartalmazó mappa csomagjai miatt újrafordítandó ubéket gyűjti össze. Azokat, melyeknél a build-depends fájljban szerepel valamelyik felfrissített csomag.
+
 listateszt
 Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből frissíthetőség lekérdezése
 
