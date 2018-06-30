@@ -5,10 +5,7 @@ aptextrarel
 Az apt-cache alapján extrarelease fájlokat készít.
 
 curlextrarel
-Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít. (64 bit)
-
-curlextrarel32
-Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít. (32 bit)
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít.
 
 bdeprak
 Az ub helyi tükörből kivonatol a bdep, rdep és miez részére.
@@ -21,9 +18,6 @@ Felsorolja a csomag alapvető tulajdonságait.
 
 rdep
 Felsorolja azon csomagokat, amelyek depends fájlában a paraméter szerepel.
-
-build-depends-fix
-A build-depends fájl zsugorítója az apt-cache alapján.
 
 build-em-part
 A build-em-all szkript apt-cache változata

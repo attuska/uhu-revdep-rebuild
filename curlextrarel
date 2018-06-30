@@ -7,23 +7,28 @@
 # Az ide létrehozott fájlokat a /usr/src/UHUBUILD/ megfelelő mappájába másolva a build
 # rendszer már azokkal fog dolgozni és a létrejövő csomag extrarelease értéke nagyobb lesz az ftp-n találhatónál.
 
+function hiba () {
+    echo $string
+	echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> '
+	exit 1
+}
+
+
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 
 if [ ! $diszt ];then
-echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-exit 1
+    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hiba
 fi
 
 if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
-    echo "Nem jó a $1 architektúra paraméter"
-    echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> ' >&2
-	exit 1
+    string="Nem jó a $1 architektúra paraméter"
+    hiba
 fi
 
 if [ ! "$2" ];then
-    echo "Nincs megadva egy csomag sem!"
-    echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> ' >&2
-	exit 1
+    string="Nincs megadva egy csomag sem!"
+    hiba
 fi
 
 arch=$1

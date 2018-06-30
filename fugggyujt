@@ -4,7 +4,7 @@
 
 function hiba () {
     echo $string
-	echo 'Használat: fugggyujt <listamappa>' >&2
+	echo 'Használat: fugggyujt <listamappa>'
 	exit 1
 }
 
