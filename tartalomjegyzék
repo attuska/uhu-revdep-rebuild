@@ -4,11 +4,11 @@ A munkamappában lévő orig/mod, vagy */*.patched mappák alapján  paraméter.
 alair
 helyi repót aláír, kitalálja a disztribúciót és az architektúrát a pwd alapján.
 
-aptextrarel
-Az apt-cache alapján extrarelease fájlokat készít.
+extrarel
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít az összes csomagról.
 
 curlextrarel
-Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít.
+Ftp lelőhelyeken lévő csomagok alapján extrarelease fájlokat készít csomagsorozat szerint.
 
 bdeprak
 Az ub helyi tükörből kivonatol a bdep, rdep és miez részére.

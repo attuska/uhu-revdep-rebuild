@@ -2,53 +2,42 @@
 
 # extrarelease fájl összegyűjtő szkript csomagok újrafordításához
 
-# Az ismert uhu csomag lelőhelyekről összegyűjti a paraméterlistában
-# megkapott csomagnevek aktuális extrarelease értékeit.
-# A lelőhejek prioritási sorrendje a $pkgcimek változóban felsoroltak sorrendjének
-# felel meg.
-
-echo " az aktuális extrarelease fájlok az exrarelease mappába kerülnek"
-
 function ftplista() {
 timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $1  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$
 }
 
-pkgcimek="
-ftp://ftp.ubk.hu/pkg/3/main/
-ftp://ftp.ubk.hu/pkg/3/main/CINNAMON/
-ftp://ftp.ubk.hu/pkg/3/main/GNOME/
-ftp://ftp.ubk.hu/pkg/3/main/KDE/
-ftp://ftp.ubk.hu/pkg/3/main/MATE/
-ftp://ftp.ubk.hu/pkg/3/main/LXDE/
-ftp://ftp.ubk.hu/pkg/3/main/XFCE/
-ftp://ftp.uhulinux.hu/uhu/3/packages/update/
-ftp://ftp.uhulinux.hu/uhu/3/packages/release/
-ftp://ftp.uhulinux.hu/uhu/3/packages/new/
-"
-rm -rf extrarelease cimek
-mkdir extrarelease cimek
+function hiba () {
+    echo $string
+	echo 'Használat: extrarel <i386|amd64>'
+	exit 1
+}
 
-num=0
-for urlcim in $pkgcimek;do
-ftplista $urlcim > cimek/cim${num}
-num=$((num+1))
-done
-rm -rf extrarelease
-mkdir extrarelease
 
-for i in $@;do
-n=0
-while [ -f cimek/cim$n ]; do
-	if  grep -q ^"$i"_ cimek/cim$n; then
-	  filenev=$(grep ^"$i"_ cimek/cim$n)
-	  break
-	fi
-      n=$((n+1))
-done
-nev=$(echo $filenev | sed s/_i386.*//g)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+if [ ! $diszt ];then
+    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hiba
+fi
+
+if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
+    string="Nem jó a $1 architektúra paraméter"
+    hiba
+fi
+arch=$1
+urlcim=ftp://ftp.ubk.hu/pkg/$diszt/main/$arch
+echo " az aktuális extrarelease fájlok az exrarelease-$arch mappába kerülnek"
+
+rm -f csomagok
+
+ftplista $urlcim > csomagok
+rm -rf extrarelease-$arch
+mkdir extrarelease-$arch
+
+for filenev in `cat csomagok`;do
+nev=$(echo $filenev | sed "s/_$arch.*//g")
 extrareleasenev=$(echo $nev | sed  s/\.[0-9]*$//)
 extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
 #echo "$filenev $extrareleasenev $extrarelease"
-echo -e $extrarelease'\n' > extrarelease/$extrareleasenev
+echo -e $extrarelease'\n' > extrarelease-$arch/$extrareleasenev
 done
-rm -rf cimek
+rm -rf csomagok
