@@ -3,7 +3,7 @@
 
 function hiba () {
     echo $1
-	echo 'Használat: listateszt <listafájl>'
+	echo 'Használat: frissteszt <listafájl>'
 	exit 1
 }
 

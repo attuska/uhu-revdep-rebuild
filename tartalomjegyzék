@@ -59,7 +59,7 @@ A paraméter csomaglista alapján a frissíthető csomagokról készít listát
 fugggyujt
 A paraméter frissített csomagok ubéit tartalmazó mappa csomagjai miatt újrafordítandó ubéket gyűjti össze. Azokat, melyeknél a build-depends fájljban szerepel valamelyik felfrissített csomag.
 
-listateszt
+frissteszt
 Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből frissíthetőség lekérdezése
 
 mi
