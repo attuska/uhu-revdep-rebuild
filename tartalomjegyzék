@@ -1,3 +1,6 @@
+paccs
+A munkamappában lévő orig/mod, vagy */*.patched mappák alapján  paraméter.patch fájlt készít.
+
 alair
 helyi repót aláír, kitalálja a disztribúciót és az architektúrát a pwd alapján.
 

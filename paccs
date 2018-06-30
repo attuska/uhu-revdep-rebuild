@@ -1,16 +1,33 @@
 #!/bin/bash
 
 # Az orig és mod mappák tartalmáról a paraméterév.patch foltot hoz létre
+
+function hiba () {
+    echo $string
+	echo 'Használat: paccs <foltnév>'
+	echo "A munkamappában kell lennie vagy orig és mod, vagy * és *.patched mappa párnak"
+	exit 1
+}
+
 if [ -z "$1" ]; then
-echo paraméter kell;
-exit 1
+    string="foltnév paraméter kell"
+    hiba
 fi
-if [ ! -d orig ]; then
-echo orig könyvtár nincs
-exit 1
+
+if [ -d orig ] && [ -d mod ];then
+    diff -Nur orig mod > "$1".patch
+    exit 0
+else
+    mod=$(ls -1 | grep patched)
+    if [ ! "$mod" ]; then
+        string="nincs összehasonlítható mappapáros"
+        hiba
+    fi
+    orig=$(echo $mod | sed s/\.patched//)
+    if [ ! -d $orig ]; then
+        string="nincs összehasonlítható mappapáros"
+        hiba
+    else
+        diff -Nur $orig $mod > "$1".patch
+    fi
 fi
-if [ ! -d mod ]; then
-echo mod könyvtár nincs
-exit 1
-fi
-diff -Nur orig mod > "$1".patch
