@@ -8,7 +8,7 @@
 # rendszer már azokkal fog dolgozni és a létrejövő csomag extrarelease értéke nagyobb lesz az ftp-n találhatónál.
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> '
 	exit 1
 }
@@ -17,18 +17,15 @@ function hiba () {
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
-    string="Nem jó a $1 architektúra paraméter"
-    hiba
+    hiba "Nem jó a $1 architektúra paraméter"
 fi
 
 if [ ! "$2" ];then
-    string="Nincs megadva egy csomag sem!"
-    hiba
+    hiba "Nincs megadva egy csomag sem!"
 fi
 
 arch=$1

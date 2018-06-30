@@ -3,7 +3,7 @@
 #
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: fugggyujt <listamappa>'
 	exit 1
 }
@@ -15,8 +15,7 @@ gitdir=~/gittek/ubk/ub-$kisdiszt
 forrdir=$1
 
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 if [ ! "$1" ];then
@@ -24,13 +23,11 @@ if [ ! "$1" ];then
 fi
 
 if [ ! -d $forrdir ];then
-    string="Nincs $forrdir mappa"
-    hiba
+    hiba "Nincs $forrdir mappa"
 fi
 
 if [ ! -d $gitdir ];then
-    string="Nincs klónozott $gitdir !"
-    hiba
+    hiba "Nincs klónozott $gitdir !"
 fi
 
 echo "A $gitdir frissítése"

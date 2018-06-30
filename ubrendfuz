@@ -1,23 +1,32 @@
 #!/bin/bash
-
 # A fordítási sorrendfájlok összefűzése
+
+function hiba () {
+    echo $1
+	exit 1
+}
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
-echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-exit 1
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 gitmappa=~/gittek/ubk/ub-${kisdiszt}
+osszubrend=osszubrend
+rm -f $osszubrend
 
+if [ ! -d $gitmappa ];then
+    hiba "Nincs klónozott $gitmappa"
+fi
 echo gittmapa aktualizálása
 cd $gitmappa
 git pull
 cd -
 
+echo "Az összefűzött fordítási sorrendfájl a $osszubrend fájl"
 for i in `ls -1 $gitmappa/Build-order/*txt`;do
 if [ ! "$(echo $i | grep chroot)" ];then
-cat $i >>osszubrend
+    cat $i >>$osszubrend
 fi
 done

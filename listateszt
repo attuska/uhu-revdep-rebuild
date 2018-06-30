@@ -2,26 +2,24 @@
 #leteszteli terminálban a listafájlban felsorolt csomagok frissíthetőségét
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: listateszt <listafájl>'
 	exit 1
 }
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 if [ ! "$1" ]; then
-	string="listafájl paranéter kell!"
-	hiba
+	hiba "listafájl paranéter kell!"
 fi
 
 listafile=$1
 
 if [ ! -f $listafile ];then
-        string="nincs $listafile listafájl!"
-        hiba
+    hiba "Nincs $listafile listafájl!"
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
@@ -29,8 +27,7 @@ workdir=`pwd`
 gitdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gitdir ];then
-    string="Nincs klónozott $gitdir !"
-    hiba
+    hiba "Nincs klónozott $gitdir !"
 fi
 
 echo "A $gitdir frissítése"

@@ -5,20 +5,18 @@
 # sources mappát készít, ha az nem lenne
 
 function hiba () {
-    echo $string
+    echo $1
     echo "Használat: verno <mappa>"
 	exit 1
 }
 
 workdir=$1
 if [ ! "$workdir" ];then
-    string="mappa paraméter kell!"
-    hiba
+    hiba "mappa paraméter kell!"
 fi
 
 if [ ! -d $workdir ];then
-    string="Nincs $workdir mappa!"
-    hiba
+    hiba "Nincs $workdir mappa!"
 fi
 
 for i in `ls -1 $workdir`;do

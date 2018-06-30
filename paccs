@@ -3,15 +3,14 @@
 # Az orig és mod mappák tartalmáról a paraméterév.patch foltot hoz létre
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: paccs <foltnév>'
 	echo "A munkamappában kell lennie vagy orig és mod, vagy * és *.patched mappa párnak"
 	exit 1
 }
 
 if [ -z "$1" ]; then
-    string="foltnév paraméter kell"
-    hiba
+    hiba "foltnév paraméter kell"
 fi
 
 if [ -d orig ] && [ -d mod ];then
@@ -20,13 +19,11 @@ if [ -d orig ] && [ -d mod ];then
 else
     mod=$(ls -1 | grep patched)
     if [ ! "$mod" ]; then
-        string="nincs összehasonlítható mappapáros"
-        hiba
+        hiba "Nincs összehasonlítható mappapáros"
     fi
     orig=$(echo $mod | sed s/\.patched//)
     if [ ! -d $orig ]; then
-        string="nincs összehasonlítható mappapáros"
-        hiba
+        hiba "Nincs összehasonlítható mappapáros"
     else
         diff -Nur $orig $mod > "$1".patch
     fi

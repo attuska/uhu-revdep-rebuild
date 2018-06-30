@@ -5,7 +5,7 @@
 # használható az ubk1, ubk2 és ubk3 github helyi tükreinél is.
 
 function hiba () {
-    echo $string
+    echo $1
 	exit 1
 }
 
@@ -13,22 +13,19 @@ workdir=`pwd`
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
 
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
 keszdir=$workdir/keszek
 if [ ! -d $keszdir ];then
-    string="Nincs $keszdir !"
-    hiba
+    hiba "Nincs $keszdir !"
 fi
 
 ubdir=~/gittek/ubk/ub-$kisdiszt
 if [ ! -d $ubdir ];then
-    string="Nincs klónozott $ubdir!"
-    hiba
+    hiba "Nincs klónozott $ubdir!"
 fi
 
 echo "A $ubdir aktualizálása..."

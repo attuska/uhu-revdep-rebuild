@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function hiba () {
-    echo $string
+    echo $1
     echo "Használat: fordit <ub> [32]"
     echo "32 bites fordításhoz kell 3. paraméterként a 32 megadása"
 	exit 1
@@ -10,8 +10,7 @@ function hiba () {
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
@@ -24,8 +23,7 @@ else
 fi
 
 if [ ! -d $ub ];then
-    string="Nincs $ub ub"
-    hiba
+    hiba "Nincs $ub ub"
 fi
 
 echo "A $ub ub $arch bites fordítása..."

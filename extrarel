@@ -7,7 +7,7 @@ timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump 
 }
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: extrarel <i386|amd64>'
 	exit 1
 }
@@ -15,13 +15,11 @@ function hiba () {
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
-    string="Nem jó a $1 architektúra paraméter"
-    hiba
+    hiba "Nem jó a $1 architektúra paraméter"
 fi
 arch=$1
 urlcim=ftp://ftp.ubk.hu/pkg/$diszt/main/$arch

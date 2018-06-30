@@ -2,7 +2,7 @@
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
 
 function hiba () {
-    echo $string
+    echo $1
 	echo 'Használat: frissgyujt <listafájl>'
 	exit 1
 }
@@ -10,13 +10,11 @@ function hiba () {
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 
 if [ ! "$1" ]; then
-    string="listafájl paraméter kell!"
-    hiba
+    hiba "listafájl paraméter kell!"
 fi
 
 if [ ! $diszt ];then
-    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-    hiba
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
@@ -24,15 +22,13 @@ workdir=`pwd`
 gitdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gitdir ];then
-    string="Nincs klónozott $gitdir !"
-    hiba
+    hiba "Nincs klónozott $gitdir !"
 fi
 
 
 listafile=$1
 if [ ! -f $listafile ];then
-    string="Nincs $listafile listafájl!"
-    hiba
+    hiba "Nincs $listafile listafájl!"
 fi
 
 echo "A $gitdir frissítése"
