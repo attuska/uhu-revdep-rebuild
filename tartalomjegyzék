@@ -41,11 +41,8 @@ Paraméter csomaghalmaz függőségi vizsgálata az apt-cache alapján, a build-
 revdep-rebuild
 A paraméter csomagok miatt újrafordítandó csomagok listája fordítási sorrendben az apt-cache alapján.
 
-revfordit64
-64 bites sorozatfordítást végző szkript egy ubrend fájl alapján
-
-revfordit32
-32 bites sorozatfordítást végző szkript egy ubrend fájl alapján
+sorfordit
+64, vagy 32 bites sorozatfordítást végző szkript egy sorrendfájl alapján.
 
 revfrissit
 Régebbi újrafordítandó cuccokat összegyűjtő szkriptem.

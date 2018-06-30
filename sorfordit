@@ -1,0 +1,91 @@
+#!/bin/bash -e
+
+# A megadott sorrendfájl sorrendje alapján elvégzi a fordítást a forrasok mappába elhelyezett
+# ubék használatával. Ha talál az ubrend fájlban felsorolt mappát, akkor azt a fordítási mappába helyezi,
+# majd elvégzi a fordítást. Ha sikeres, akkor áthelyezi ezt a mappát a keszek mappába, és próbálkozik az
+# ubrend fájlban lévő következő elemmel.
+# Ha nem sikerül a fordítás és nem kapott a szkript "deb" parancssori paramétert, akkor áthelyezi ezt a mappát a failed
+# mappába és veszi a következő ubrend elemét.
+# Ha nem sikerül a fordítás és deb parancssori paramétert kapott, akkor leáll a szkript.
+# 32 bites fordításhoz meg kell adni egy "32" paramétert.
+
+function hiba () {
+    echo $1
+	echo 'Használat: sorfordit <sorrendfájl> [32|deb] [32|deb]'
+	echo 'Ha valamelyik paraméter 32, akkor 32 bites fordítás lesz'
+	echo 'Ha valamelyik paraméter "deb", akkor a fordítási sorozat hiba esetén leáll'
+	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+workdir=`pwd`
+
+if [ -z "$1" ];then
+    hiba "Parancssori paraméter kell!"
+else
+    sorfile=$1
+    sorrendfile=$workdir/$sorfile
+fi
+if [ ! -f $sorrendfile ];then
+    hiba "Nincs $sorfile nevű fordítási sorrendfájl"
+fi
+
+if [ "$2" == "32" ] || [ "$3" == "32" ];then
+    arch=32
+else
+    arch=64
+fi
+
+debug=""
+if [ "$2" == "deb" ] || [ "$3" == "deb" ];then
+    debug=debug
+fi
+
+forrdir=$workdir/forrasok
+pkgdir=/usr/src/UHUBUILD/packages-$diszt
+faileddir=$workdir/failed
+celdir=$workdir/keszek
+
+if [ ! -d $forrdir ];then
+    hiba "Nincs $forrdir mappa"
+fi
+
+if [ -z "$(ls -A $forrdir)" ]; then
+    hiba "A $forrdir mappa üres"
+fi
+
+# Mappagyártás, ha nincs
+if [ -d $celdir ];then
+    mkdir -p $celdir
+fi
+if [ -d $faileddir ];then
+    mkdir -p $faileddir
+fi
+
+for i in `cat $sorrendfile`; do
+    if [ -d $forrdir/$i ]; then
+        mv $forrdir/$i ./
+        # sources mappa kell
+        if [ ! -d $i/sources ];then
+            mkdir -p $i/sources
+        fi
+        if [ ! "$debug" ];then
+            set +e
+            build-$diszt -ns -$arch $i
+            if [ $? -eq 2 ]; then
+                mv $i $faileddir/
+            else
+                mv $i $celdir/
+            fi
+            set -e
+        else
+            build-$diszt -ns -$arch $i
+            mv $i $celdir/
+        fi
+    fi
+done
+echo "A $forrdir mappa nem tartalmaz a(z) $sorfile szerint fordítható elemet."
