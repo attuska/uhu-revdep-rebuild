@@ -1,14 +1,24 @@
 #!/bin/bash
 
 # u2d alapján módosítja a $workdirben lévő ubék version fájját, ha az elérhető verzió más.
-# más, mint az eredit, akkor a release fájl értékét 1 -re állítja
+# Ha más, mint az eredi, akkor a release fájl értékét 1 -re állítja
 # sources mappát készít, ha az nem lenne
 
-workdir=forrasok
+function hiba () {
+    echo $string
+    echo "Használat: verno <mappa>"
+	exit 1
+}
+
+workdir=$1
+if [ ! "$workdir" ];then
+    string="mappa paraméter kell!"
+    hiba
+fi
 
 if [ ! -d $workdir ];then
-echo "Nincs $workdir mappa!"
-exit 1
+    string="Nincs $workdir mappa!"
+    hiba
 fi
 
 for i in `ls -1 $workdir`;do

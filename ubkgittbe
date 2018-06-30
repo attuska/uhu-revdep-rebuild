@@ -4,35 +4,43 @@
 # A státusz ellenőrzése után mehet a commit és a push.
 # használható az ubk1, ubk2 és ubk3 github helyi tükreinél is.
 
+function hiba () {
+    echo $string
+	exit 1
+}
+
 workdir=`pwd`
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
+
 if [ ! $diszt ];then
-echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-exit 1
+    string="Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    hiba
 fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
 keszdir=$workdir/keszek
 if [ ! -d $keszdir ];then
-echo "Nincs $keszdir !"
-exit 1
+    string="Nincs $keszdir !"
+    hiba
 fi
 
 ubdir=~/gittek/ubk/ub-$kisdiszt
 if [ ! -d $ubdir ];then
-echo "Nincs klónozott $ubdir !"
-exit 1
+    string="Nincs klónozott $ubdir!"
+    hiba
 fi
 
+echo "A $ubdir aktualizálása..."
 cd $ubdir
 git pull
 
+echo "A kész ubék elhelyezése..."
 for i in `ls -1 $keszdir`;do
-rm -rf $i
-cp -r $keszdir/$i ./
-rm -rf $i/sources
-git add $i
+    rm -rf $i
+    cp -r $keszdir/$i ./
+    rm -rf $i/sources
+    git add $i
 done
 
 git status
