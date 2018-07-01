@@ -15,6 +15,9 @@ fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
+if [ -z "$1" ];then
+    hiba "Nincs megadva ub!"
+fi
 ub=$1
 if [ "$2" == "32" ];then
     arch="32"
