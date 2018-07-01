@@ -1,3 +1,6 @@
+keszellenor
+A github/Build-order sorrendfájljaiban felsorolt ubék alapján az ubékben lévő alcsomagoknak megfelelő ftp tárolóban lévő csomagok létét és azok verziószámainak azonosságát ellenőrzi.
+
 paccs
 A munkamappában lévő orig/mod, vagy */*.patched mappák alapján  paraméter.patch fájlt készít.
 

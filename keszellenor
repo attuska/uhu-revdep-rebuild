@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# A github/Build-order sorrendfájljaiban felsorolt ubék alapján az ubékben lévő alcsomagoknak megfelelő ftp tárolóban lévő csomagok létét és azok verziószámainak azonosságát ellenőrzi.
+
+function hiba () {
+    echo $1
+    echo "Használat: keszellenor <amd64|i386>"
+    exit 1
+}
+
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+if [ -z $1 ];then
+    hiba "Architektúra paraméter kell!"
+fi
+
+if [ "$1" == "i386" ];then
+    arch=$1
+elif [ "$1" == "amd64" ];then
+    arch=$1
+else
+    hiba "Hibás az architektúra paraméter!"
+fi
+
+curlcim=ftp://ftp.ubk.hu/pkg/$diszt/main/$arch/
+
+# helyi github tükör
+gittek=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gittek ];then
+    hiba "Nincs klónozott $gittek tükör!"
+fi
+
+#aktualizálás
+echo "A $gittek frissítése"
+cd $gittek
+git pull
+cd -
+
+nincs=nincs-$arch
+# takarítás
+rm -rf $nincs
+rm -f csomaglista keszcsomagok keszcsomagnevek
+
+# feltöltött csomagok
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > csomaglista
+
+# hiányzó ub gyűjtó mappa
+mkdir -p $nincs
+
+#feltöltöttek lekérdezése ideiglenes fájlokba
+cat csomaglista | sed s/_.*//g | sed s/.*\\///g >>keszcsomagok
+cat csomaglista | sed s/.*\\///g >>keszcsomagnevek
+
+#Build-ordersorok mappája
+ordermappa=$gittek/Build-order
+
+#végiglépümk majd minden egyes fordítási soron
+for ordertext in `ls -1 $ordermappa/*.txt`;do
+echo $ordertext #hogy valamit lássunk
+#leendő build-ordersor nevű mappanév, ahová a hiányzó ubéket kell gyűjteni
+mappanev=$nincs/$(echo $ordertext | sed s/.*\\///g | sed s/\.txt//g)
+#ub név kihámozása a fordítási sorrend fájlból
+for ubnev in `cat $ordertext | sed s/#.*//g`;do
+van=igen #feltételezzük, hogy már elkészült
+#a csomag githubos verzója
+ubver=$(cat $gittek/$ubnev/version)
+#bináris csomagnevek az ub packages mappájának tartalma alapján
+for csomagnev in `ls -1 $gittek/$ubnev/packages`;do
+    if [ ! "$(grep ^${csomagnev}$ keszcsomagok)" ];then
+        van="" #nincs kész, kilépünk
+        break
+    else
+    #kész van, kiszedem a kész feltöltött csomag verzióját
+        csomagver=$(grep ^${csomagnev}_ keszcsomagnevek | sed "s/${csomagnev}_//" | sed s/-.*//)
+        if [ ! "$csomagver" == "$ubver" ];then
+            # ekkor bizony más van feltöltve, mint a github forrásé!
+            echo "$csomagnev csomagver: $csomagver ubver: $ubver  más" >>$nincs/verziomas
+            echo "$csomagnev csomagver: $csomagver ubver: $ubver  más"
+        fi
+    fi
+done
+if [ ! "$van" ];then
+#nincs kész, tehát bemásoljuk az ubét a hiánygyűjtő helyre
+mkdir -p $mappanev
+cp -a $gittek/$ubnev $mappanev/
+mkdir -p $mappanev/$ubnev/sources
+fi
+done
+done
+rm -f csomaglista keszcsomagok keszcsomagnevek
