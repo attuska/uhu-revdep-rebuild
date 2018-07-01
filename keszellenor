@@ -64,35 +64,40 @@ ordermappa=$gittek/Build-order
 
 #végiglépümk majd minden egyes fordítási soron
 for ordertext in `ls -1 $ordermappa/*.txt`;do
-echo $ordertext #hogy valamit lássunk
-#leendő build-ordersor nevű mappanév, ahová a hiányzó ubéket kell gyűjteni
-mappanev=$nincs/$(echo $ordertext | sed s/.*\\///g | sed s/\.txt//g)
-#ub név kihámozása a fordítási sorrend fájlból
-for ubnev in `cat $ordertext | sed s/#.*//g`;do
-van=igen #feltételezzük, hogy már elkészült
-#a csomag githubos verzója
-ubver=$(cat $gittek/$ubnev/version)
-#bináris csomagnevek az ub packages mappájának tartalma alapján
-for csomagnev in `ls -1 $gittek/$ubnev/packages`;do
-    if [ ! "$(grep ^${csomagnev}$ keszcsomagok)" ];then
-        van="" #nincs kész, kilépünk
-        break
-    else
-    #kész van, kiszedem a kész feltöltött csomag verzióját
-        csomagver=$(grep ^${csomagnev}_ keszcsomagnevek | sed "s/${csomagnev}_//" | sed s/-.*//)
-        if [ ! "$csomagver" == "$ubver" ];then
-            # ekkor bizony más van feltöltve, mint a github forrásé!
-            echo "$csomagnev csomagver: $csomagver ubver: $ubver  más" >>$nincs/verziomas
-            echo "$csomagnev csomagver: $csomagver ubver: $ubver  más"
+    echo $ordertext #hogy valamit lássunk
+    #leendő build-ordersor nevű mappanév, ahová a hiányzó ubéket kell gyűjteni
+    mappanev=$nincs/$(echo $ordertext | sed s/.*\\///g | sed s/\.txt//g)
+    #ub név kihámozása a fordítási sorrend fájlból
+    for ubnev in `cat $ordertext | sed s/#.*//g`;do
+        if [ ! -d $gittek/$ubnev ];then
+            echo "$ordertext -ben van, a githubon nincs $ubnev" >>$nincs/Build-order-felesleg
+            echo "$ordertext -ben van, a githubon nincs $ubnev"
+        else
+            van=igen #feltételezzük, hogy már elkészült
+            #a csomag githubos verzója
+            ubver=$(cat $gittek/$ubnev/version)
+            #bináris csomagnevek az ub packages mappájának tartalma alapján
+            for csomagnev in `ls -1 $gittek/$ubnev/packages`;do
+                if [ ! "$(grep ^${csomagnev}$ keszcsomagok)" ];then
+                    van="" #nincs kész, kilépünk
+                    break
+                else
+                    #kész van, kiszedem a kész feltöltött csomag verzióját
+                    csomagver=$(grep ^${csomagnev}_ keszcsomagnevek | sed "s/${csomagnev}_//" | sed s/-.*//)
+                    if [ ! "$csomagver" == "$ubver" ];then
+                        # ekkor bizony más van feltöltve, mint a github forrásé!
+                        echo "$csomagnev csomagver: $csomagver ubver: $ubver  más" >>$nincs/verziomas
+                        echo "$csomagnev csomagver: $csomagver ubver: $ubver  más"
+                    fi
+                fi
+            done
         fi
-    fi
-done
-if [ ! "$van" ];then
-#nincs kész, tehát bemásoljuk az ubét a hiánygyűjtő helyre
-mkdir -p $mappanev
-cp -a $gittek/$ubnev $mappanev/
-mkdir -p $mappanev/$ubnev/sources
-fi
-done
+        if [ ! "$van" ];then
+            #nincs kész, tehát bemásoljuk az ubét a hiánygyűjtő helyre
+            mkdir -p $mappanev
+            cp -a $gittek/$ubnev $mappanev/
+            mkdir -p $mappanev/$ubnev/sources
+        fi
+    done
 done
 rm -f csomaglista keszcsomagok keszcsomagnevek
