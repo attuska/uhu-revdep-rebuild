@@ -1,0 +1,37 @@
+#!/bin/bash
+# A
+function hiba () {
+    echo "A megadott string keresése az utvonal mappában lévő csomagok 'dpkg-deb -I' kimenetében."
+    echo "A keresés eredménye a keresendő string nevével egyező nevű fájlban lesz."
+    echo "Használat: binanal <binárismappa útvonala> <idézőjelbezárt keresendő string>"
+    echo $1
+	exit 1
+}
+#bintukor=/usr/src/UHUBUILD/pkg/UBK1/main/amd64
+#string="wxwidgets (>= 3.0.3"
+
+rm -f tmpfile
+if [ -z $1 ];then
+    hiba "bináris útvonal kell"
+fi
+bintukor=$1
+if [ ! -d $bintukor ];then
+    hiba "Nincs $bintukor mappa!"
+fi
+if [ ! "$2" ];then
+    hiba "keresendő string kell"
+fi
+string=$2
+# esetleges régi eredményfájl törlése
+rm -f "$string"
+for i in `ls -1 $bintukor/*.uhu`;do
+van=$(dpkg-deb -I $i | grep "$string")
+echo -n .
+if [ "$van" ];then
+echo
+echo $i
+echo $i | sed s/.*amd64\\\///g | sed s/_.*//g >>tmpfile
+fi
+done
+echo
+mv tmpfile "$string"
