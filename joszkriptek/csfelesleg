@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+
+function hiba () {
+    echo $1
+	echo 'Használat: csfelesleg <i386|amd64>'
+	exit 1
+}
+
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
+    hiba "Nem jó a $1 architektúra paraméter"
+fi
+
+arch=$1
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+workdir=`pwd`
+gitdir=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gitdir ];then
+    hiba "Nincs klónozott $gitdir !"
+fi
+
+# takarítások
+rm -f tmpfile packagelist
+
+echo "A $gitdir frissítése"
+
+cd $gitdir >/dev/null
+git pull
+cd - >/dev/null
+
+echo "A $gitdir ubéinek packages neveinek összegyűjtése"
+
+for ube in `ls -1 $gitdir`;do
+    if [ -d $gitdir/$ube/packages ];then
+    for packagename in `ls -1 $gitdir/$ube/packages`;do
+        echo $packagename >>packagelist
+    done
+    else
+    echo "Nincs $gitdir/$ube/packages mappa"
+    fi
+done
+
+curlcim=ftp://ftp.ubk.hu/pkg/${diszt}/main/${arch}/
+
+timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > tmpfile
+
+for csomag in `cat tmpfile`;do
+#    filenev=$(grep ^"${i}"_ tmpfile)
+package=$(echo $csomag  | sed s/_.*//)
+if [ ! "$(grep ^$package$ packagelist)" ];then
+    echo $csomag
+fi
+done
+# takarítás
+rm -f tmpfile packagelist
