@@ -47,10 +47,27 @@ for i in `cat $workdir/$listafile`;do
         cd $gitdir/$i
         over=$(cat version)
         ujver=$(uhubuild-u2d)
-        if [ ! "$over" == "$ujver" ];then
-            cp -a $gitdir/$i $workdir/$frissmappa
-            echo "$i $over -> $ujver" >>$workdir/$listafile-uj
-#            echo $i >>$workdir/$listafile-ujnevek
+        if [ ! "$ujver" ];then
+            ujver=$(uhubuild-u2d)
+            if [ ! "$ujver" ];then
+                ujver=$(uhubuild-u2d)
+            fi
+            if [ ! "$ujver" ];then
+                ujver=$(uhubuild-u2d)
+            fi
+            if [ ! "$ujver" ];then
+                ujver=$(uhubuild-u2d)
+            fi
+        fi
+        if [ "$ujver" ];then
+            if [ ! "$over" == "$ujver" ];then
+                cp -a $gitdir/$i $workdir/$frissmappa
+                echo "$i $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
+#               echo $i >>$workdir/$listafile-ujnevek
+            fi
+        else
+            mkdir -p $workdir/$frissmappa/u2dhiba
+            cp -a $gitdir/$i $workdir/$frissmappa/u2dhiba
         fi
         cd - > /dev/null
     fi
