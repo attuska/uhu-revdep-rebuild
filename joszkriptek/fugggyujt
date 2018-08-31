@@ -52,6 +52,12 @@ for i in `ls -1 $forrdir`;do
         fi
     done
 done
-echo "Az újrafordítandó ubék a $ujrakell mappában vannak"
-echo "Ennek tartalma:"
-ls -1 $ujrakell
+if [ -z "$(ls -A $ujrakell)" ]; then
+    rm -rf $ujrakell
+    echo "Nincs újrafordítandó ubé."
+    exit 0
+else
+    echo "Az újrafordítandó ubék a $ujrakell mappában vannak"
+    echo "Ennek tartalma:"
+    ls -1 $ujrakell
+fi
