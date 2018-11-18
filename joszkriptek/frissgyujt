@@ -73,9 +73,10 @@ for i in `cat $workdir/$listafile`;do
     fi
 done
 echo
-if [ -f $listafile-uj ];then
-echo "A frissíthető csomagok a $listafile-uj fájlban vannak felsorolva."
+if [ -f $workdir/$frissmappa/listafile-uj ];then
+echo "A frissíthető csomagok a $workdir/$frissmappa/listafile-uj fájlban vannak felsorolva."
 echo "A frissíthető ubék a $workdir/$frissmappa mappában vannak"
 else
+rm -rf $workdir/$frissmappa
 echo "Nincs frissíthető csomag."
 fi
