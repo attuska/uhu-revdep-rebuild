@@ -114,11 +114,15 @@ cd - >/dev/null
 mappa=$1
 if [ -f $1 ];then # Létező fájl a paraméter
     frissmappa=$(echo $1 | sed s%.*/%%g)-friss
+    rm -rf $workdir/$frissmappa
+    mkdir -p $workdir/$frissmappa
     echo "A $1 fájlban felsorolt ubék vizsgálata..."
     echo
     frissgy $mappa
 elif [ -d $mappa ];then # Létező mappa a paraméter
     echo "A $mappa mappában lévő ub listafájlok kiértékelése..."
+    rm -rf $workdir/frissek
+    mkdir -p $workdir/frissek
     for textek in `ls -1 $mappa`;do
         if [ ! -f $mappa/$textek ];then # Nem fájl a mappa aktuális eleme
             hiba "Nincs $mappa/$textek fájl!"
@@ -126,7 +130,7 @@ elif [ -d $mappa ];then # Létező mappa a paraméter
             echo
             echo "A $textek fájlban felsorolt ubék vizsgálata..."
             echo
-            frissmappa=$mappa-friss/$textek
+            frissmappa=frissek/$textek
             frissgy $mappa/$textek
         fi
     done
