@@ -1,82 +1,135 @@
 #!/bin/bash
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
 
+# hibakezelés
+# kiírja a paramétert és a használati útmutatót, majd kilép.
 function hiba () {
     echo $1
-	echo 'Használat: frissgyujt <listafájl>'
+	echo 'Használat: frissgyujt < listafájl | mappa >'
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+# Színes kiíratás
+function verziobeszed () {
+u2dfile="%s \e[1;31mNincs u2d! \e[0m%s"
+over=$(cat version)
+ujver=""
+if [ -f u2d ] ; then
+    ujver=`uhubuild-u2d`
+    if [ ! "$ujver" ]; then
+        ujver=`uhubuild-u2d`
+    fi
+    if [ ! "$ujver" ]; then
+        ujver=`uhubuild-u2d`
+    fi
+    if [ ! "$ujver" ]; then
+        ujver=`uhubuild-u2d`
+    fi
+    if [ ! "$ujver" ]; then
+        ujver=`uhubuild-u2d`
+    fi
+    if [ "$(echo $ujver | grep noupdate)" ];then
+        u2dfile="%s \e[1;34m$ujver \e[0m%s"
+    else
+        if [ "$ujver" == "$over" ]; then
+            u2dfile="%s \e[1;32m$ujver \e[0m%s"
+        else
+            u2dfile="%s \e[1;31m$ujver \e[0m%s"
+        fi
+    fi
+    if [ ! "$ujver" ];then
+        u2dfile="%s \e[1;31mu2d hibás! \e[0m%s"
+    fi
+fi
+uzenet=`echo "$nev"" ""$over" "$u2dfile"`
+printf "%s $uzenet %s\n"
+}
+# Összegyűjti a paraméterként megkapott listafájlból a frissíthető csomagokat.
+ 
+function frissgy() {
+    listafile=$1
+    rm -rf $frissmappa
+    mkdir -p $frissmappa
+    rm -f $listafile-uj $listafile-ujnevek
 
+    for nev in `cat $listafile`;do
+        if [ -d $gitdir/$nev ]; then
+            cd $gitdir/$nev
+            verziobeszed
+            if [ "$ujver" ];then
+                if [ ! "$over" == "$ujver" ];then
+                    cp -a $gitdir/$nev $workdir/$frissmappa
+                    echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
+                fi
+            else
+                mkdir -p $workdir/$frissmappa/u2dhiba
+                cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+            fi
+            cd - > /dev/null
+        else
+            echo "Nincs $gitdir/$nev mappa!"
+        fi
+    done
+    echo
+    echo "A $frissmappa vizsgálata  kész."
+    if [ -f $workdir/$frissmappa/listafile-uj ];then
+        echo
+        echo "A frissíthető csomagok a $workdir/$frissmappa/listafile-uj fájlban vannak felsorolva."
+        echo "A frissíthető ubék a $workdir/$frissmappa mappában vannak."
+    else
+        rm -rf $workdir/$frissmappa
+        echo "Nincs frissíthető csomag, a $workdir/$frissmappa mappa törölve."
+    fi
+}
+
+# a paraméter alapján a kívánt tevékenység elvégzése
+
+# Paraméter kell!
 if [ ! "$1" ]; then
-    hiba "listafájl paraméter kell!"
+    hiba "Nincs listafájl, vagy mappa paraméter!"
 fi
 
+# Csak a fejlesztői mappában futtatható
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
-
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
+
+# Klónozott github ubé tükör kell, ha van, akkor frissítjük
 gitdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gitdir ];then
     hiba "Nincs klónozott $gitdir !"
 fi
 
-
-listafile=$1
-if [ ! -f $listafile ];then
-    hiba "Nincs $listafile listafájl!"
-fi
-
-echo "A $gitdir frissítése"
+echo "A $gitdir frissítése..."
 cd $gitdir >/dev/null
-git pull
+#git pull
+echo "A  $gitdir aktuális állapotú."
+echo
 cd - >/dev/null
 
-frissmappa=friss-$listafile
-rm -rf $frissmappa
-mkdir -p $frissmappa
-rm -f $listafile-uj $listafile-ujnevek
-
-for i in `cat $workdir/$listafile`;do
-    if [ -d $gitdir/$i ]; then
-        echo $i
-        cd $gitdir/$i
-        over=$(cat version)
-        ujver=$(uhubuild-u2d)
-        if [ ! "$ujver" ];then
-            ujver=$(uhubuild-u2d)
-            if [ ! "$ujver" ];then
-                ujver=$(uhubuild-u2d)
-            fi
-            if [ ! "$ujver" ];then
-                ujver=$(uhubuild-u2d)
-            fi
-            if [ ! "$ujver" ];then
-                ujver=$(uhubuild-u2d)
-            fi
-        fi
-        if [ "$ujver" ];then
-            if [ ! "$over" == "$ujver" ];then
-                cp -a $gitdir/$i $workdir/$frissmappa
-                echo "$i $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
-#               echo $i >>$workdir/$listafile-ujnevek
-            fi
+mappa=$1
+if [ -f $1 ];then # Létező fájl a paraméter
+    frissmappa=$(echo $1 | sed s%.*/%%g)-friss
+    echo "A $1 fájlban felsorolt ubék vizsgálata..."
+    echo
+    frissgy $mappa
+elif [ -d $mappa ];then # Létező mappa a paraméter
+    echo "A $mappa mappában lévő ub listafájlok kiértékelése..."
+    for textek in `ls -1 $mappa`;do
+        if [ ! -f $mappa/$textek ];then # Nem fájl a mappa aktuális eleme
+            hiba "Nincs $mappa/$textek fájl!"
         else
-            mkdir -p $workdir/$frissmappa/u2dhiba
-            cp -a $gitdir/$i $workdir/$frissmappa/u2dhiba
+            echo
+            echo "A $textek fájlban felsorolt ubék vizsgálata..."
+            echo
+            frissmappa=$mappa-friss/$textek
+            frissgy $mappa/$textek
         fi
-        cd - > /dev/null
-    fi
-done
-echo
-if [ -f $workdir/$frissmappa/listafile-uj ];then
-echo "A frissíthető csomagok a $workdir/$frissmappa/listafile-uj fájlban vannak felsorolva."
-echo "A frissíthető ubék a $workdir/$frissmappa mappában vannak"
+    done
 else
-rm -rf $workdir/$frissmappa
-echo "Nincs frissíthető csomag."
+    hiba "létező listafájl, vagy listafájlokat tartalmazó mappa paraméter kell!"
 fi
