@@ -76,6 +76,9 @@ for i in `cat $sorrendfile`; do
         if [ ! "$debug" ];then
             set +e
             build-$diszt -ns -$arch $i
+            if [ ! "$diszt" == UBK1 ];then
+                rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$i
+            fi
             if [ $? -eq 2 ]; then
                 mv $i $faileddir/
             else
@@ -84,6 +87,9 @@ for i in `cat $sorrendfile`; do
             set -e
         else
             build-$diszt -ns -$arch $i
+            if [ ! "$diszt" == UBK1 ];then
+                rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$i
+            fi
             mv $i $celdir/
         fi
     fi
