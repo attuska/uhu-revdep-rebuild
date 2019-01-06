@@ -55,15 +55,21 @@ function frissgy() {
     for nev in `cat $listafile`;do
         if [ -d $gitdir/$nev ]; then
             cd $gitdir/$nev
-            verziobeszed
-            if [ "$ujver" ];then
-                if [ ! "$over" == "$ujver" ];then
-                    cp -a $gitdir/$nev $workdir/$frissmappa
-                    echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
-                fi
+            if [ ! -f $gitdir/$nev/u2d ];then
+                verziobeszed
+                mkdir -p $workdir/$frissmappa/u2dhiany
+                cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
             else
-                mkdir -p $workdir/$frissmappa/u2dhiba
-                cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+                verziobeszed
+                if [ "$ujver" ];then
+                    if [ ! "$over" == "$ujver" ];then
+                        cp -a $gitdir/$nev $workdir/$frissmappa
+                        echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
+                    fi
+                else
+                    mkdir -p $workdir/$frissmappa/u2dhiba
+                    cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+                fi
             fi
             cd - > /dev/null
         else
