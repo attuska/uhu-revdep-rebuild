@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# A helyi csomagkészletben az egyes csomagok függőségeinek létét vizsgálja a dpkg-deb segítségével.
+# A észlelt hiányosságok a csujra és a fugghibak fájlokban lesznek felsorolva
+
+function hiba () {
+    echo $1
+    echo "Használat: fell [<amd64|i386>]"
+    exit 1
+}
+
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+if [ "$diszt" == "UBK3" ];then
+    arch=amd64
+else
+    if [ -z $1 ];then
+        hiba "Architektúra paraméter kell!"
+    fi
+    if [ "$1" == "i386" ];then
+        arch=$1
+    elif [ "$1" == "amd64" ];then
+        arch=$1
+    else
+        hiba "Hibás az architektúra paraméter!"
+    fi
+fi
+
+tukor=/usr/src/UHUBUILD/pkg/$diszt/main/$arch
+if [ ! -d $tukor ];then
+    hiba "Nincs $tukor !"
+fi
+
+rm -f csomaglista
+ls -1 $tukor | grep -E "uhu"$ > csomaglista
+
+for pkg in `cat csomaglista`;do
+    alldeps=$(dpkg-deb -I $tukor/$pkg | grep Depends: \
+        | sed 's/Depends: //' | sed 's/,/\n/g' | sed 's/^ //g')
+    novers=$(echo "$alldeps" | sed /\(/d)
+    noversions=""
+    for i in $novers;do
+        noversions=$(echo $noversions" "$(echo ${i}_))
+    done
+    alldepends=$(echo "$noversions" "$(echo "$alldeps"  | grep -E '\)' \
+        | sed s/\)//g | sed s/\(//g | sed s/\>//g | sed s/=//g | sed 's/  /_/g')" | sed -E 's/ /\n/')
+    for de in $alldepends;do
+        van=$(grep ^$de csomaglista)
+        if [ ! "$van" ];then
+            echo "$de kellene a $pkg csomagnak !" >>hibak
+            echo "$de kellene a $pkg csomagnak, de az nincs a helyi tükörben!"
+            echo "$pkg csomagnak $de lenne az igénye!" >>cshibak
+        fi
+    done
+done
+cat hibak | sort -u >fugghibak
+cat cshibak | sort -u >csujra
+rm -f hibak
+rm -f cshibak
+rm -f csomaglista
