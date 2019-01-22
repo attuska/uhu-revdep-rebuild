@@ -82,3 +82,6 @@ A fedora git tárolót klónozza
 
 ubrendfuz
 Összefűzi a fordítási sorrendfájlokat
+
+fell
+A helyi csomagkészlet repóban a dpkg-deb segítségével ellenőrzi az ott lévő csomagok függőségi igényeinek meglétét
