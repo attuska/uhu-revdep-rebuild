@@ -78,9 +78,8 @@ function frissgy() {
     done
     echo
     echo "A $frissmappa vizsgálata  kész."
-    if [ -f $workdir/$frissmappa/listafile-uj ];then
+    if [ ! -z "$(ls -A $workdir/$frissmappa)" ];then
         echo
-        echo "A frissíthető csomagok a $workdir/$frissmappa/listafile-uj fájlban vannak felsorolva."
         echo "A frissíthető ubék a $workdir/$frissmappa mappában vannak."
     else
         rm -rf $workdir/$frissmappa
