@@ -9,7 +9,7 @@
 
 function hiba () {
     echo $1
-	echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat> '
+	echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat|frissített-csomagok-ubéit-tartalmazó-mappa> '
 	exit 1
 }
 
@@ -25,20 +25,29 @@ if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
 fi
 
 if [ ! "$2" ];then
-    hiba "Nincs megadva egy csomag sem!"
+    hiba "Nincs megadva egy csomag sem, vagy azok ubéit tartalmazó mappa!"
 fi
 
 arch=$1
 erelmappa=erel-${arch}
 
-# csak a csomaghalmaz kell a paraméterlistából
 csomaghalmaz=""
-for csomag in "$@" ; do
-    if [ ! $csomag == $1 ]; then
-        csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
-    fi
-done
-
+if [ ! -d $2 ];then
+# csak a csomaghalmaz kell a paraméterlistából
+    for csomag in "$@" ; do
+        if [ ! $csomag == $1 ]; then
+            csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
+        fi
+    done
+else
+    for csomag in `ls -1 $2`;do
+        if [ -d $2/$csomag ];then
+            csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
+        else
+            hiba "A $2/$csomag nem mappa!"
+        fi
+    done
+fi
 curlcim=ftp://ftp.ubk.hu/pkg/${diszt}/main/${arch}/
 
 # takarítások
