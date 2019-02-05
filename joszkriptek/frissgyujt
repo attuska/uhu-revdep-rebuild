@@ -9,25 +9,41 @@ function hiba () {
 	exit 1
 }
 
+function verbe () {
+ujver=`uhubuild-u2d`
+if [ "$ujver" ]; then
+   return
+else
+   ujver=`uhubuild-u2d`
+   if [ "$ujver" ]; then
+        return
+   else
+        ujver=`uhubuild-u2d`
+        if [ "$ujver" ]; then
+            return
+        else
+            ujver=`uhubuild-u2d`
+            if [ "$ujver" ]; then
+                return
+            else
+                ujver=`uhubuild-u2d`
+                if [ "$ujver" ]; then
+                    return
+                else
+                    ujver=`uhubuild-u2d`
+                fi
+            fi
+        fi
+    fi
+fi
+}
 # Színes kiíratás
 function verziobeszed () {
 u2dfile="%s \e[1;31mNincs u2d! \e[0m%s"
 over=$(cat version)
 ujver=""
 if [ -f u2d ] ; then
-    ujver=`uhubuild-u2d`
-    if [ ! "$ujver" ]; then
-        ujver=`uhubuild-u2d`
-    fi
-    if [ ! "$ujver" ]; then
-        ujver=`uhubuild-u2d`
-    fi
-    if [ ! "$ujver" ]; then
-        ujver=`uhubuild-u2d`
-    fi
-    if [ ! "$ujver" ]; then
-        ujver=`uhubuild-u2d`
-    fi
+    verbe
     if [ "$(echo $ujver | grep noupdate)" ];then
         u2dfile="%s \e[1;34m$ujver \e[0m%s"
     else
@@ -61,14 +77,12 @@ function frissgy() {
                 cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
             else
                 verziobeszed
-                if [ "$ujver" ];then
-                    if [ ! "$over" == "$ujver" ];then
-                        cp -a $gitdir/$nev $workdir/$frissmappa
-                        echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
-                    fi
-                else
+                if [ ! "$ujver" ];then
                     mkdir -p $workdir/$frissmappa/u2dhiba
                     cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+                elif [ ! "$over" == "$ujver" ];then
+                        cp -a $gitdir/$nev $workdir/$frissmappa
+                        echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
                 fi
             fi
             cd - > /dev/null
@@ -115,6 +129,8 @@ cd $gitdir >/dev/null
 echo "A  $gitdir aktuális állapotú."
 echo
 cd - >/dev/null
+
+ujver=global
 
 mappa=$1
 if [ -f $1 ];then # Létező fájl a paraméter
