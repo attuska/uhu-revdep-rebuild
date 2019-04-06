@@ -79,7 +79,7 @@ for i in `cat $sorrendfile`; do
             if [ ! "$diszt" == UBK1 ];then
                 rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$i
             fi
-            if [ $? -eq 2 ]; then
+            if [ $? -ne 0 ]; then
                 mv $i $faileddir/
             else
                 mv $i $celdir/

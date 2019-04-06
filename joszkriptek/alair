@@ -3,6 +3,12 @@
 # A helyi repót aláírja, a repóban indítva
 # A disztribution megállapítása
 # A /UHUBUILD/packages-UBK? esetén UBK1, UBK2, UBK3 lesz a $diszt
+
+function hiba () {
+    echo $1
+	exit 1
+}
+
 diszt=$(pwd | sed s/.*packages-// | sed s/\\/.*//)
 # Ha nem ott vagyunk, akkor talán a helyi tükör main/$arch mappájában.. 
 if [ ! "$diszt" ];then
@@ -14,8 +20,7 @@ diszt=$(cat Release | grep Version | sed 's/Version: //')
 fi
 # Ha ott sem, akkor kilépünk.
 if [ ! "$diszt" ];then
-echo nem állapítható meg a disztribution!
-exit 1
+hiba nem állapítható meg a disztribution!
 fi
 arch=$(pwd | sed s/.*\\///)
 if [ $arch = amd64 ] || [ $arch = i386 ];then
@@ -24,7 +29,7 @@ rm -f Packages*
 echo "uhu-reposign $diszt $arch"
 uhu-reposign $diszt $arch
 else
-echo "Csak i386 és amd64 mappában futtatható a szkript!"
+hiba "Csak i386 vagy amd64 mappában futtatható a szkript!"
 fi
 
 

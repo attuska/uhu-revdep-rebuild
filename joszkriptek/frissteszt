@@ -41,6 +41,6 @@ for i in `cat $listafile`;do
             u2dinfo
         cd - >/dev/null
     else
-        echo "Nincs $gitdir/$i mappa!"
+        hiba "Nincs $gitdir/$i mappa!"
     fi
 done
