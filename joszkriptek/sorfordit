@@ -71,12 +71,18 @@ fi
 for i in `cat $sorrendfile`; do
     if [ -d $forrdir/$i ]; then
         mv $forrdir/$i ./
+        rm -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         set +e
         build-$diszt -ns -$arch $i
-        ls /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         if [ ! "$debug" ];then
             if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
                 mv $i $faileddir/
+            else
+                mv $i $celdir/
+            fi
+        else
+            if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
+                exit 1
             else
                 mv $i $celdir/
             fi
