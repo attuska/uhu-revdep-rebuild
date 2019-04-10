@@ -35,8 +35,10 @@ if [ ! -f $sorrendfile ];then
 fi
 
 if [ "$2" == "32" ] || [ "$3" == "32" ];then
+    archdir=i386
     arch=32
 else
+    archdir=amd64
     arch=64
 fi
 
@@ -69,29 +71,17 @@ fi
 for i in `cat $sorrendfile`; do
     if [ -d $forrdir/$i ]; then
         mv $forrdir/$i ./
-        # sources mappa kell
-        if [ ! -d $i/sources ];then
-            mkdir -p $i/sources
-        fi
+        set +e
+        build-$diszt -ns -$arch $i
+        ls /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         if [ ! "$debug" ];then
-            set +e
-            build-$diszt -ns -$arch $i
-            if [ ! "$diszt" == UBK1 ];then
-                rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$i
-            fi
-            if [ $? -ne 0 ]; then
+            if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
                 mv $i $faileddir/
             else
                 mv $i $celdir/
             fi
-            set -e
-        else
-            build-$diszt -ns -$arch $i
-            if [ ! "$diszt" == UBK1 ];then
-                rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$i
-            fi
-            mv $i $celdir/
         fi
+        set -e
     fi
 done
 echo "A $forrdir mappa nem tartalmaz a(z) $sorfile szerint fordítható elemet."
