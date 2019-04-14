@@ -21,6 +21,9 @@ fi
 ub=$1
 if [ "$2" == "32" ];then
     arch="32"
+    if [ "$diszt" == "UBK3" ];then
+        hiba "UBK3 esetén 32 bites fordítás nem végezhető!"
+    fi
 else
     arch="64"
 fi
@@ -33,6 +36,4 @@ echo "A $ub ub $arch bites fordítása..."
 
 build-$kisdiszt -ns -$arch $ub
 
-if [ ! "$diszt" == UBK1 ];then
 rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$ub
-fi
