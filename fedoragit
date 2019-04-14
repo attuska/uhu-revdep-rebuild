@@ -1,3 +1,0 @@
-#!/bin/bash
-
-git clone git://pkgs.fedoraproject.org/rpms/$1.git
