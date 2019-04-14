@@ -88,6 +88,7 @@ for i in `cat $sorrendfile`; do
             fi
         fi
         set -e
+        rm -rf $pkgdir/ub
     fi
 done
 echo "A $forrdir mappa nem tartalmaz a(z) $sorfile szerint fordítható elemet."

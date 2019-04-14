@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+# Egy paraméterként megadott csomag mibenviltának lekérdezése
+
+function hiba () {
+    echo $1
+	echo 'Használat: miez <ub> '
+	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+gitmappa=~/gittek/ubk/ub-${kisdiszt}
+
+if [ ! -d $gitmappa ];then
+    hiba "Nincs klónozott $gitmappa"
+fi
+if [ ! -d $gitmappa/$1 ];then
+    hiba "nincs $1 ubmappa"
+fi
+leiras=$(cat $gitmappa/$1/packages/$1/summary/hu)
+szekcio=$(cat $gitmappa/$1/packages/$1/section)
+acquire=$(cat $gitmappa/$1/acquire)
+echo "$1 -- $leiras"
+echo "$1 -- $szekcio"
+echo $acquire
