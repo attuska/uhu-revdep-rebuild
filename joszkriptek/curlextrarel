@@ -10,9 +10,12 @@
 function hiba () {
     echo $1
 	echo 'Használat: curlextrarel <i386|amd64> <csomagsorozat|frissített-csomagok-ubéit-tartalmazó-mappa> '
+	echo 'UBK3 esetén az architektúra paraméter elhagyható.'
 	exit 1
 }
 
+# Hiba miatti kilépéskor maradhatott fájl törlése
+rm -f tmpfile
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
 
@@ -20,38 +23,52 @@ if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
-if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
-    hiba "Nem jó a $1 architektúra paraméter"
+# Ha $diszt UBK3, és $1 i386, akkor hiba
+if [ "$diszt" == "UBK3" ];then
+    if [ "$(echo $1 | grep '^i386$')" ]; then
+        hiba "UBK3 esetén nem lehet i386 a paraméter!"
+    else
+        arch=amd64
+        if [ "$(echo $1 | grep '^amd64$')" ]; then
+            cspar=$2
+        else
+            cspar=$1
+        fi
+        erelmappa=erel
+    fi
+else
+    if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
+        hiba "Nem jó a $1 architektúra paraméter"
+    else
+        arch=$1
+    fi
+    if [ ! "$2" ];then
+        hiba "Nincs megadva egy csomag sem, vagy azok ubéit tartalmazó mappa!"
+    else
+        cspar=$2
+    fi
+    erelmappa=erel-${arch}
 fi
-
-if [ ! "$2" ];then
-    hiba "Nincs megadva egy csomag sem, vagy azok ubéit tartalmazó mappa!"
-fi
-
-arch=$1
-erelmappa=erel-${arch}
-
 csomaghalmaz=""
-if [ ! -d $2 ];then
+if [ ! -d $cspar ];then
 # csak a csomaghalmaz kell a paraméterlistából
     for csomag in "$@" ; do
-        if [ ! $csomag == $1 ]; then
+        if [ ! $csomag == $arch ]; then
             csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
         fi
     done
 else
-    for csomag in `ls -1 $2`;do
-        if [ -d $2/$csomag ];then
+    for csomag in `ls -1 $cspar`;do
+        if [ -d $cspar/$csomag ];then
             csomaghalmaz=$(echo -e "$csomaghalmaz"'\n'"$csomag")
         else
-            hiba "A $2/$csomag nem mappa!"
+            hiba "A $cspar/$csomag nem mappa!"
         fi
     done
 fi
 curlcim=ftp://ftp.ubk.hu/pkg/${diszt}/main/${arch}/
 
 # takarítások
-rm -f tmpfile
 rm -rf $erelmappa
 mkdir $erelmappa
 
