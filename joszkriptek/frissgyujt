@@ -67,25 +67,29 @@ function frissgy() {
     rm -rf $frissmappa
     mkdir -p $frissmappa
     rm -f $listafile-uj $listafile-ujnevek
-
     for nev in `cat $listafile`;do
         if [ -d $gitdir/$nev ]; then
-            cd $gitdir/$nev
-            if [ ! -f $gitdir/$nev/u2d ];then
-                verziobeszed
-                mkdir -p $workdir/$frissmappa/u2dhiany
-                cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
-            else
-                verziobeszed
-                if [ ! "$ujver" ];then
-                    mkdir -p $workdir/$frissmappa/u2dhiba
-                    cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
-                elif [ ! "$over" == "$ujver" ];then
-                        cp -a $gitdir/$nev $workdir/$frissmappa
-                        echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
+            if [ ! "$(echo $freezed | grep "$nev ")" ];then
+                cd $gitdir/$nev
+                if [ ! -f $gitdir/$nev/u2d ];then
+                    verziobeszed
+                    mkdir -p $workdir/$frissmappa/u2dhiany
+                    cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
+                else
+                    verziobeszed
+                    if [ ! "$ujver" ];then
+                        mkdir -p $workdir/$frissmappa/u2dhiba
+                        cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+                    elif [ ! "$over" == "$ujver" ];then
+                            cp -a $gitdir/$nev $workdir/$frissmappa
+                            echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
+                    fi
                 fi
+                cd - > /dev/null
+            else
+#                echo "freeze: $nev"
+                printf "%s \e[1;33mfreeze: $nev \e[0m%s %s\n"
             fi
-            cd - > /dev/null
         else
             echo "Nincs $gitdir/$nev mappa!"
         fi
@@ -133,6 +137,14 @@ cd - >/dev/null
 ujver=global
 
 mappa=$1
+
+#fagyizottakat listája
+# a fagyifájl létezése esetén nem üres a fagyilista, abban kell felsorolni a valamiért nem frissíthetőket.
+if [ -f $workdir/freeze/freeze ];then
+    freezed=$(cat $workdir/freeze/freeze | sed 's/ #.*//g' | sed 's/^/ /g' | sed 's/$/ /g')
+else
+    freezed=""
+fi
 if [ -f $1 ];then # Létező fájl a paraméter
     frissmappa=$(echo $1 | sed s%.*/%%g)-friss
     rm -rf $workdir/$frissmappa

@@ -60,7 +60,7 @@ ubkgittbe
 A fordítás után az elkészült csomagok githubra történő committolását segíti elő.
 
 frissgyujt
-A paraméter csomaglista alapján a frissíthető csomagokról készít listát
+A paraméter csomaglista alapján a frissíthető csomagokról készít listát. A build-mappa/freeze/freeze fájlban (ha van) vannak felsorolva a nem frissíthetők.
 
 fugggyujt
 A paraméter frissített csomagok ubéit tartalmazó mappa csomagjai miatt újrafordítandó ubéket gyűjti össze. Azokat, melyeknél a build-depends fájljban szerepel valamelyik felfrissített csomag.
