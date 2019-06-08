@@ -1,0 +1,61 @@
+#!/bin/bash
+# Felsorolja a megadott mappában lévő csomagok miatt újraforgatandó csomagokat
+#
+
+function hiba () {
+    echo $1
+	echo 'Használat: fugg <mappa>'
+	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+workdir=`pwd`
+gitdir=~/gittek/ubk/ub-$kisdiszt
+forrdir=$1
+ujfagyi=ujfagyi
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+rm -f ujfagyi
+if [ ! "$1" ];then
+    hiba
+fi
+
+if [ ! -d $forrdir ];then
+    hiba "Nincs $forrdir mappa"
+fi
+
+if [ ! -d $gitdir ];then
+    hiba "Nincs klónozott $gitdir !"
+fi
+
+#fagyizottakat listája
+if [ -f $workdir/freeze/freeze ];then
+    freezed=$(cat $workdir/freeze/freeze | sed 's/ #.*//g' | sed 's/^/ /g' | sed 's/$/ /g')
+else
+    freezed=""
+fi
+for ub in `ls -1 $forrdir`;do
+echo "$ub"
+    for j in `ls -1 $forrdir/$ub/packages/`;do
+        csomi=$(grep ^$j$ $gitdir/*/build-depends | sed s/\\/build-depends.*//g | sed "s|$gitdir\/||g")
+        if [ "$csomi" ];then
+            for csom in $csomi;do
+            if [ ! "$(echo $freezed | grep "$csom ")" ];then
+                echo "    $csom"
+            else
+                echo "A $ub fagyasztandó a $csom miatt!"
+                echo "$ub # $csom">>ujfagyi
+                break
+            fi
+            done
+            if [ ! "$(echo $freezed | grep "$csom ")" ];then
+                break
+            fi
+        fi
+    done
+done
+if [ -f $ujfagyi ];then
+    echo "Az $ujfagyi fájlban vannak a fagyasztandó csomagok felsorolva!"
+fi

@@ -65,6 +65,9 @@ A paraméter csomaglista alapján a frissíthető csomagokról készít listát.
 fugggyujt
 A paraméter frissített csomagok ubéit tartalmazó mappa csomagjai miatt újrafordítandó ubéket gyűjti össze. Azokat, melyeknél a build-depends fájljban szerepel valamelyik felfrissített csomag.
 
+fugg
+A paraméterként megadott mappa ubéit vizsgálja, a freeze/freeze fájl alapján, a fagyasztandókat felsorolja az ujfagyi fájlban, mely tartalmával a freeze/freeze listafájl kiegészíthető, továbbá az egyes ubék frissítése miatt a miatta újraforgatandó ubéket is felsorolja.
+
 frissteszt
 Paraméter csomaglista csomagjainak a paraméter disztró ub helyi tüköréből frissíthetőség lekérdezése
 
