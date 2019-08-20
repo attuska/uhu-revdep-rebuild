@@ -88,3 +88,6 @@ ubrendfuz
 
 fell
 A helyi csomagkészlet repóban a dpkg-deb segítségével ellenőrzi az ott lévő csomagok függőségi igényeinek meglétét
+
+tukorfriss
+A helyi méglévő ugk csomagtükröt frissíti az ubk tárolóval a rscinc paranccsal. Csak a build mappában állva használható
