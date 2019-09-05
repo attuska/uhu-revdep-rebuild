@@ -66,15 +66,14 @@ else
         fi
     done
 fi
-curlcim=http://download.ubk.hu/${diszt}/main/${arch}/
+curlcim=http://download.ubk.hu/pkg/${diszt}/main/${arch}/
 
 # takarítások
 rm -rf $erelmappa
 mkdir $erelmappa
 
 echo " Az aktuális extrarelease fájlok az $erelmappa mappába kerülnek."
-
-lynx -connect_timeout=5 -listonly -dump $curlim | sed 's%.*/%%g' | grep "uhu"$ > tmpfile
+lynx -connect_timeout=5 -listonly -dump $curlcim | sed 's%.*/%%g' | grep "uhu"$ > tmpfile
 
 for i in $csomaghalmaz;do
     filenev=$(grep ^"${i}"_ tmpfile)
