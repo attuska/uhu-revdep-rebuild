@@ -1,0 +1,43 @@
+#!/bin/bash
+# Az ubk tároló helyi tükrének szinkronizálása
+
+function hiba () {
+    echo $1
+	echo 'Használat: tukorfriss <amd64 | i386>'
+	exit 1
+}
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+if [ "$diszt" == "UBK3" ];then
+    if [ ! "$1" ];then
+        arch=amd64
+    else
+        if [ ! "$1" == "amd64" ];then
+            hiba "UBK3 csak amd64 -es!"
+        else
+            arch=amd64
+        fi
+    fi
+else
+echo $1
+    if [[ $1 == amd64 ]] || [[ $1 == i386 ]];then
+        arch=$1    
+    else
+        hiba "kötelező az amd64, vagy i386 megadása!"
+    fi
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+tukor=/usr/src/UHUBUILD/pkg/$diszt/main/
+
+if [ ! -d $tukor ];then
+    hiba "Nincs $tukor/$1 mappa"
+fi
+
+rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$1 $tukor
