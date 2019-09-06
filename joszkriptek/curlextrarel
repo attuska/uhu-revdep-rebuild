@@ -76,6 +76,7 @@ echo " Az aktuális extrarelease fájlok az $erelmappa mappába kerülnek."
 lynx -connect_timeout=5 -listonly -dump $curlcim | sed 's%.*/%%g' | grep "uhu"$ > tmpfile
 
 for i in $csomaghalmaz;do
+if [ "$(grep ^"${i}"_ tmpfile)" ];then
     filenev=$(grep ^"${i}"_ tmpfile)
     echo $filenev
     nev=$(echo $filenev | sed "s/_$arch.*//g")
@@ -83,6 +84,7 @@ for i in $csomaghalmaz;do
     extrarelease=$(echo $nev| sed s/.*-//g | sed s/[0-9]*\\.//g)
     #echo "$filenev $extrareleasenev $extrarelease"
     echo -e $extrarelease'\n' > $erelmappa/$extrareleasenev
+fi
 done
 # takarítás
 rm -f tmpfile
