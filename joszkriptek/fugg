@@ -8,7 +8,7 @@ function hiba () {
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
 gitdir=~/gittek/ubk/ub-$kisdiszt

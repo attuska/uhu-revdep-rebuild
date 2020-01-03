@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# A helyi csomagkészletben az egyes csomagok függőségeinek létét vizsgálja a dpkg-deb segítségével.
+# A észlelt hiányosságok a csujra és a fugghibak fájlokban lesznek felsorolva
+
+function hiba () {
+    echo $1
+    echo "Használat: bdepell"
+    exit 1
+}
+
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+gittdir=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gittdir ];then
+    hiba "Nincs $gittdir !"
+fi
+
+# csomagnévlista
+for i in `ls -1 $gittdir`;do
+    if [ ! "$i" == "Build-order" ];then
+        for csomag in `ls -1 $gittdir/$i/packages`;do
+            echo $csomag >>tmpfile
+        done
+    fi
+done
+cat tmpfile | sort -u >csomaglista
+rm tmpfile
+
+for ub in `ls -1 $gittdir`;do
+    if [ ! "$ub" == "Build-order" ];then
+        if [ -f $gittdir/$ub/build-depends ];then
+            for bdep in `cat $gittdir/$ub/build-depends`;do
+                if [ ! "$(grep ^$bdep$ csomaglista)" ];then
+                    echo "$ub fordításhoz kellene $bdep !"
+                fi
+            done
+        fi
+    fi
+done

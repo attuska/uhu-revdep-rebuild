@@ -1,0 +1,126 @@
+#!/bin/bash
+# Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagok ubéit.
+
+workdir=`pwd`
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$' | sed s/.*-//)
+if [ ! $diszt ];then
+echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+exit 1
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+ubdir=~/gittek/ubk/ub-$kisdiszt
+if [ ! -d $ubdir ];then
+echo "Nincs klónozott $ubdir !"
+exit 1
+fi
+
+gitmappa=$ubdir
+
+workd=~/homok/${kisdiszt}frisse
+frisslista=frisslista
+
+rm -rf $workd
+mkdir -p $workd
+echo gittmapa aktualizálása
+cd $gitmappa
+git pull
+cd -
+rm -f $workd/$frisslista
+for lista in `ls -1 $gitmappa/Build-order/*.txt`;do
+    if [ ! "$(echo $lista | grep chroot)" ];then
+    gyujtomappa=$(echo $lista | sed s%\.txt%%g | sed s%.*Build-order/%%g)
+    workdir=$workd/$gyujtomappa
+    mkdir -p $workdir
+    echo "     $gyujtomappa" >> $workd/$frisslista
+    for i in `cat $lista`;do
+        if [ -d $gitmappa/$i ];then
+            cd $gitmappa/$i
+            friss="igen"
+            nev=`cat sourcename`
+            if [ -f u2d ] ; then
+                over=`cat version`
+                ujver=`uhubuild-u2d`
+                if [ ! "$ujver" ]; then
+                    ujver=`uhubuild-u2d`
+                fi
+                if [ ! "$ujver" ]; then
+                    ujver=`uhubuild-u2d`
+                fi
+                if [ ! "$ujver" ];then
+                    ujver=`uhubuild-u2d`
+                fi
+                if [ ! "$ujver" ];then
+                    friss="rossz"
+                else
+                    if [ "$(echo $ujver | grep noupdate)" ];then
+                        friss="noupdate"
+                        u2dfile="%s \e[1;34m$ujver \e[0m%s"
+                    else
+                        if [ "$over" == "$ujver" ];then
+                            u2dfile="%s \e[1;32m$over \e[0m%s"
+                            friss=""
+                        else
+                            if [[ "$over" > "$ujver" ]];then
+                                u2dfile="%s \e[1;32m$uover \e[0m%s"
+                                friss=devel
+                            else
+                            u2dfile="%s \e[1;31m$ujver \e[0m%s"
+                            fi
+                        fi
+                    fi
+                fi
+            else
+                friss="nou2d"
+            fi
+            cd - > /dev/null
+            if [ "$friss" ];then
+                if [ "$friss" == "rossz" ];then
+                    if [ ! -d $workdir/u2dhiba ];then
+                        mkdir -p $workdir/u2dhiba
+                    fi
+                    cp -r $gitmappa/$i $workdir/u2dhiba
+                else
+                    if [ "$friss" == "nou2d" ];then
+                        if [ ! -d $workdir/nou2d ];then
+                            mkdir -p $workdir/nou2d
+                        fi
+                        cp -r $gitmappa/$i $workdir/nou2d
+                        echo "$i nou2d" >>$workd/$frisslista
+                    else
+                        if [ "$friss" == "noupdate" ];then
+                            if [ ! -d $workdir/noupdate ];then
+                                mkdir -p $workdir/noupdate
+                            fi
+                            cp -r $gitmappa/$i $workdir/noupdate
+                            echo "$i noupdate" >>$workd/$frisslista
+                        else
+                            if [ "$friss" == "devel" ];then
+                                if [ ! -d $workdir/devel ];then
+                                    mkdir -p $workdir/devel
+                                fi
+                                if [ ! -d $workdir/devel/$i ];then
+                                    cp -r $gitmappa/$i $workdir/devel
+                                    echo "$i devel" >>$workd/$frisslista
+                                fi
+                            else
+                                if [ ! -d $workdir/$i ];then
+                                    cp -r $gitmappa/$i $workdir/
+                                    echo "$i $over " '> '"$ujver" >>$workd/$frisslista
+                                    mkdir -p $workdir/$i/sources
+                                fi
+                            fi
+                        fi
+                    fi
+                fi
+            fi
+            uzenet=`echo "$nev"" ""$over" "$u2dfile"`
+            printf "%s $uzenet %s\n"
+            u2dfile=""
+        else
+            echo "Nincs $i"
+        fi
+    done
+    fi
+done
