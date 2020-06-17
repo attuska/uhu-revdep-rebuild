@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Az ub git tükrében lévő build-depends, depends
+# analízise alapján helyi gyorsan analizálható mappák és benne fájlok létrehozása
+# a bdep és rdep szkriptek számára.
+
+function hiba () {
+    echo $1
+    echo "Használat: bdeprak"
+    exit 1
+}
+
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+
+if [ ! $diszt ];then
+    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+
+gittdir=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gittdir ];then
+    hiba "Nincs $gittdir !"
+fi
+
+analdir=(`pwd`/devanal)
+bdep=$analdir/bdep
+rdep=$analdir/rdep
+
+rm -rf $analdir
+mkdir -p $analdir $bdep $rdep
+
+cd $gittdir
+git pull
+cd -
+for j in `ls -1 $gittdir`;do
+  echo $j
+  touch $bdep/$j
+  touch $rdep/$j
+  if [ -f $gittdir/$j/build-depends ];then
+    cat $gittdir/$j/build-depends | sed s/-dev$//g >>$bdep/$j
+  fi
+
+  if [ -f $gittdir/$j/packages/${j}/depends ];then
+    cat $gittdir/$j/packages/${j}/depends | sed s/-dev$//g >>$rdep/$j
+  else
+    for k in `ls $gittdir/$j/packages`;do
+      if [ -f $gittdir/$j/packages/${j}/${k}/depends ];then
+	cat $gittdir/$j/packages/${j}/${k}/depends >>$depends/$j
+	break
+      fi
+    done
+  fi
+done
