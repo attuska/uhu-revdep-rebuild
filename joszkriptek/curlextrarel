@@ -24,9 +24,9 @@ if [ ! $diszt ];then
 fi
 
 # Ha $diszt UBK3, és $1 i386, akkor hiba
-if [ "$diszt" == "UBK3" ];then
+if [[ "$diszt" > "UBK2" ]];then
     if [ "$(echo $1 | grep '^i386$')" ]; then
-        hiba "UBK3 esetén nem lehet i386 a paraméter!"
+        hiba "csak UBK1 és UBK2 esetén lehet i386 a paraméter!"
     else
         arch=amd64
         if [ "$(echo $1 | grep '^amd64$')" ]; then

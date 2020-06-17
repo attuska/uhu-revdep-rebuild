@@ -21,8 +21,8 @@ fi
 ub=$1
 if [ "$2" == "32" ];then
     arch="32"
-    if [ "$diszt" == "UBK3" ];then
-        hiba "UBK3 esetén 32 bites fordítás nem végezhető!"
+    if [[ "$diszt" > "UBK2" ]];then
+        hiba "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
     fi
 else
     arch="64"

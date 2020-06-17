@@ -3,7 +3,7 @@
 
 function hiba () {
     echo $1
-	echo 'Használat: tukorfriss <amd64 | i386>'
+	echo 'Használat: tukorfriss [ <amd64 | i386>]'
 	exit 1
 }
 
@@ -13,31 +13,21 @@ if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
 
-if [ "$diszt" == "UBK3" ];then
-    if [ ! "$1" ];then
+if [[ "$diszt" < "UBK3" ]] && [[ ! $1 ]];then
+    hiba "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+else
+    if [[ "$diszt" > "UBK2" ]];then
         arch=amd64
     else
-        if [ ! "$1" == "amd64" ];then
-            hiba "UBK3 csak amd64 -es!"
-        else
-            arch=amd64
-        fi
-    fi
-else
-echo $1
-    if [[ $1 == amd64 ]] || [[ $1 == i386 ]];then
-        arch=$1    
-    else
-        hiba "kötelező az amd64, vagy i386 megadása!"
+        arch=$1
     fi
 fi
-
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
 tukor=/usr/src/UHUBUILD/pkg/$diszt/main/
 
 if [ ! -d $tukor ];then
-    hiba "Nincs $tukor/$1 mappa"
+    hiba "Nincs $tukor/$arch mappa"
 fi
 
-rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$1 $tukor
+rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$arch $tukor

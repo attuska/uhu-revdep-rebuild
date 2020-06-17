@@ -37,8 +37,8 @@ fi
 if [ "$2" == "32" ] || [ "$3" == "32" ];then
     archdir=i386
     arch=32
-    if [ "$diszt" == "UBK3" ];then
-        hiba "UBK3 esetén 32 bites fordítás nem végezhető!"
+    if [[ "$diszt" > "UBK2" ]];then
+        hiba "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
     fi
 
 else
