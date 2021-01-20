@@ -39,6 +39,9 @@ for j in `ls -1 $gittdir`;do
   echo $j
   touch $bdep/$j
   touch $rdep/$j
+  for alpkg in `ls -1 $gittdir/$j/packages`;do
+    echo $alpkg >>$analdir/osszpkg
+  done  
   if [ -f $gittdir/$j/build-depends ];then
     cat $gittdir/$j/build-depends | sed s/-dev$//g >>$bdep/$j
   fi
