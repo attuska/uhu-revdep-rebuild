@@ -1,0 +1,89 @@
+#!/bin/bash
+
+function webtest () {
+    teszt=""
+    teszt=$(curl -Is $1 | grep OK)
+    if [ ! "$teszt" ];then
+        echo "A $1 weblap nem érhető el!"
+    fi
+}
+
+function tombir () {
+if [ ! "$elemek" ];then
+	echo "A $webpage nem érhető el"
+else
+	echo '#'$webpage >> $vdrcardclientconf
+	j=0
+    for word in $elemek;do
+        tomb[$j]=$word
+        j=$j+1
+    done
+    echo "cccam2:${tomb[0]}:${tomb[1]}:0:${tomb[2]}:${tomb[3]}" >> $vdrcardclientconf
+    echo  >> $vdrcardclientconf
+fi
+}
+
+vdrcardclientconf=/etc/vdr/plugins/sc/cardclient.conf
+if [ ! -d /etc/vdr/plugins/sc/ ];then
+    echo "A vdr-plugin-sc nincs telepítve!"
+    exit 1
+fi
+
+if [ -f $vdrcardclientconf ]; then
+	mv $vdrcardclientconf $vdrcardclientconf.`date '+%F'`
+fi
+
+# ccctamtiger
+webpage=https://cccamtiger.com/fcccam/
+elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
+tombir
+
+#cccamstore
+webpage="http://free.cccamstore.tv/free-server.php"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+tombir
+
+#cccamprime
+webpage="https://www.cccamprime.com/cccam48h.php"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
+
+# cccamfree.net
+webpage="https://cccamfree.net/"
+elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+tombir cccamfree.net
+
+#cccammax
+webpage="https://cccammax1.weebly.com/cccam-48.html"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+tombir
+
+#cccamiptv
+webpage="https://cccamiptv.co/index.php/free-cccam/"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
+
+# yosalite
+#webpage="https://cccamfree48h.yolasite.com/server-2.php"
+#    elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//' | sed 's/ #.*//')
+#tombir
+
+# premiumcccam.store
+webpage="http://premiumcccam.store/freetrial.php"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
+
+#cccamia
+webpage="https://cccamia.com/free-cccam/"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
+
+
+if [ ! -f $vdrcardclientconf ];then
+    echo "Nincs használható cardclient.conf!"
+else
+cat $vdrcardclientconf
+    vdr
+fi
+
+#http://cccamnice.com/cccam48h.html
