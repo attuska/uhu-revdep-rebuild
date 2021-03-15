@@ -40,16 +40,18 @@ cd - >/dev/null
 echo "A $gitdir ubéinek packages neveinek összegyűjtése"
 
 for ube in `ls -1 $gitdir`;do
-    if [ -d $gitdir/$ube/packages ];then
-    for packagename in `ls -1 $gitdir/$ube/packages`;do
-        echo $packagename >>packagelist
-    done
-    else
-    echo "Nincs $gitdir/$ube/packages mappa"
+    if [ ! "$ube" == "Build-order" ];then
+        if [ -d $gitdir/$ube/packages ];then
+        for packagename in `ls -1 $gitdir/$ube/packages`;do
+            echo $packagename >>packagelist
+        done
+        else
+        echo "Nincs $gitdir/$ube/packages mappa"
+        fi
     fi
 done
 
-curlcim=ftp://ftp.ubk.hu/pkg/${diszt}/main/${arch}/
+curlcim=http://download.ubk.hu/pkg/${diszt}/main/${arch}/
 
 timeout 10 lynx -connect_timeout=5 -read_timeout=5 -passive-ftp -listonly -dump $curlcim  | sed -r 's/^.*\/([^\/]+)\/?$/\1/' | grep -E "uhu"$ > tmpfile
 
