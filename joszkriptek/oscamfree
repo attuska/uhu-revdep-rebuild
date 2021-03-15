@@ -1,0 +1,110 @@
+#!/bin/sh
+
+# A konfig helye
+rm -f freereaderek
+confmappa=~/homok/oscam
+conffile=freereaderek
+#conffile=$confmappa/oscam.server
+confstable=$confmappa/oscam.server.stable
+# A reader csoportja
+group=2
+# A mutatott ccc verzió
+cccversion=2.0.11
+# A max hopok száma, amit igényelünk
+cccmaxhops=10
+# A reader továbboszthatósága (-1 nincs, 0 csak a közvetlen partnereknek, 1 a parnerek partnerei is)
+cccreshare=1
+
+function hiba () {
+    echo $1
+    exit 1
+}
+
+function webtest () {
+    teszt=""
+    teszt=$(curl -Is $1 | grep OK)
+    if [ ! "$teszt" ];then
+        echo "A $1 weblap nem érhető el!"
+    fi
+}
+
+function tombir () {
+    j=0
+    for word in $elemek;do
+        tomb[$j]=$word
+        j=$j+1
+    done
+name=$1
+device=${tomb[0]}
+port=${tomb[1]}
+user=${tomb[2]}
+password=${tomb[3]}
+echo >>$conffile
+echo "[reader]" >>$conffile
+echo "label = $name" >>$conffile
+echo "protocol = cccam" >>$conffile
+echo "device = $device,$port" >>$conffile
+echo "user = $user" >>$conffile
+echo "password = $password" >>$conffile
+echo "group = $group" >>$conffile
+echo "emmcache = 0,1,0" >>$conffile
+echo "cccversion = $cccversion" >>$conffile
+echo "cccmaxhops = $cccmaxhops" >>$conffile
+echo "cccreshare = $cccreshare" >>$conffile
+}
+
+#cp -f $confstable $conffile
+
+# ccctamtiger
+webpage="https://cccamtiger.com/fcccam/"
+#if [ "$teszt" ];then 
+elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
+tombir cccamtiger
+#fi
+
+# cccamstore
+webpage="http://cccamstore.tv/free-server.php"
+webtest $webpage
+if [ "$teszt" ];then 
+    elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+    tombir cccamstore
+fi
+
+#cccamia
+webpage="https://cccamia.com/free-cccam/"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir cccamia
+
+# cccammax
+webpage="https://cccammax1.weebly.com/cccam-48.html"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+tombir cccammax
+
+# cccamiptv
+webpage="https://cccamiptv.co/index.php/free-cccam/"
+elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir cccamiptv
+
+
+# cccamfree.net
+webpage="https://cccamfree.net/"
+webtest $webpage
+elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+tombir cccamfree.net
+
+# cccamprime
+webpage="https://www.cccamprime.com/cccam48h.php"
+webtest $webpage
+if [ "$teszt" ];then 
+    elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+    tombir cccamprime
+fi
+
+#if [ ! -f freereaderek ];then
+#    hiba "Nincs elérhető free szerver!"
+#else
+#    echo "Az elérhető szerverek oscam readerei a freerederek fájlban vannak felsorolva!"
+#    echo "Ennek tartalma ez:"
+#    echo
+cat freereaderek
+#fi
