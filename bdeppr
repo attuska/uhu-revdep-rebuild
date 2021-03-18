@@ -1,0 +1,16 @@
+#!/bin/bash
+
+map=frissek
+rm -f $map/*.bdeps
+for mappa in `ls -1 $map`;do
+    echo $mappa
+    for i in `ls -1 $map/$mappa`;do
+        if [ ! "$i" == "u2dhiba" ] || [ -d $map/"$i" ];then
+        echo $i >>$map/${mappa}.bdeps
+            if [ -d $map/$mappa/$i ];then
+                bdep $i >>$map/${mappa}.bdeps
+            fi
+        echo >>$map/${mappa}.bdeps
+        fi
+    done
+done
