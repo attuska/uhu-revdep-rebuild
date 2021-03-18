@@ -8,17 +8,11 @@ function hiba () {
 }
 
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$|5$' | sed s/.*-//)
 
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
-
-if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
-    hiba "Nem jó a $1 architektúra paraméter"
-fi
-
-arch=$1
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
@@ -28,6 +22,15 @@ if [ ! -d $gitdir ];then
     hiba "Nincs klónozott $gitdir !"
 fi
 
+if [[ "$kisdiszt" > ubk2 ]];then
+    arch=amd64
+else
+    if [ ! "$(echo $1 | grep '^i386$\|^amd64$')" ]; then
+        hiba "Nem jó a $1 architektúra paraméter"
+    else
+       arch=$1
+    fi
+fi
 # takarítások
 rm -f tmpfile packagelist
 
@@ -42,11 +45,11 @@ echo "A $gitdir ubéinek packages neveinek összegyűjtése"
 for ube in `ls -1 $gitdir`;do
     if [ ! "$ube" == "Build-order" ];then
         if [ -d $gitdir/$ube/packages ];then
-        for packagename in `ls -1 $gitdir/$ube/packages`;do
-            echo $packagename >>packagelist
-        done
+            for packagename in `ls -1 $gitdir/$ube/packages`;do
+                echo $packagename >>packagelist
+            done
         else
-        echo "Nincs $gitdir/$ube/packages mappa"
+            echo "Nincs $gitdir/$ube/packages mappa"
         fi
     fi
 done
