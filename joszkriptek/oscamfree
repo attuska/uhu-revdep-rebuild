@@ -66,39 +66,56 @@ tombir cccamtiger
 webpage="http://cccamstore.tv/free-server.php"
 webtest $webpage
 if [ "$teszt" ];then 
-    elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
     tombir cccamstore
 fi
 
-#cccamia
-webpage="https://cccamia.com/free-cccam/"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir cccamia
+# yosalite
+webpage="https://cccamfree48h.yolasite.com/server-2.php"
+webtest $webpage
+if [ "$teszt" ];then 
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//' | sed 's/ #.*//')
+    tombir yosalite
+fi
+
+#cccam-48h.blogspot.com
+webpage="http://cccam-48h.blogspot.com/p/blog-page_16.html"
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
 
 # cccammax
 webpage="https://cccammax1.weebly.com/cccam-48.html"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
 tombir cccammax
 
 # cccamiptv
 webpage="https://cccamiptv.co/index.php/free-cccam/"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir cccamiptv
 
 
-# cccamfree.net
-webpage="https://cccamfree.net/"
-webtest $webpage
-elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+# cccamfree
+webpage="https://cccamfrei.com/free/get.php"
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
 tombir cccamfree.net
 
 # cccamprime
 webpage="https://www.cccamprime.com/cccam48h.php"
 webtest $webpage
 if [ "$teszt" ];then 
-    elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+    elemek=$(curl -s -k $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
     tombir cccamprime
 fi
+
+# premiumcccam.store
+webpage="http://premiumcccam.store/freetrial.php"
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir
+
+#cccamia
+webpage="https://cccamia.com/free-cccam/"
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+    tombir
 
 #if [ ! -f freereaderek ];then
 #    hiba "Nincs elérhető free szerver!"

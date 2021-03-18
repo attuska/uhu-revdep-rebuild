@@ -38,45 +38,46 @@ webpage=https://cccamtiger.com/fcccam/
 elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
 tombir
 
-#cccamstore
-webpage="http://free.cccamstore.tv/free-server.php"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+#cccam-48h.blogspot.com
+webpage="http://cccam-48h.blogspot.com/p/blog-page_16.html"
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir
 
 #cccamprime
 webpage="https://www.cccamprime.com/cccam48h.php"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+webtest $webpage
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir
 
 # cccamfree.net
 webpage="https://cccamfree.net/"
-elemek=$(wget -qO- $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
+elemek=$(curl -s -k $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
 tombir cccamfree.net
 
 #cccammax
 webpage="https://cccammax1.weebly.com/cccam-48.html"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
 tombir
 
 #cccamiptv
 webpage="https://cccamiptv.co/index.php/free-cccam/"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir
 
-# yosalite
-#webpage="https://cccamfree48h.yolasite.com/server-2.php"
-#    elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//' | sed 's/ #.*//')
-#tombir
+# cccamfree
+webpage="https://cccamfrei.com/free/get.php"
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+tombir
 
 # premiumcccam.store
 webpage="http://premiumcccam.store/freetrial.php"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir
 
 #cccamia
 webpage="https://cccamia.com/free-cccam/"
-elemek=$(wget -qO- $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+    tombir
 
 
 if [ ! -f $vdrcardclientconf ];then
