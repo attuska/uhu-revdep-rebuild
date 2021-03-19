@@ -117,6 +117,16 @@ webpage="https://cccamia.com/free-cccam/"
     elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
     tombir
 
+# cccamprima
+webpage=http://cccamprima.com/free5/get2.php
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+tombir cccamprima
+
+# cccambank
+webpage=http://cccambank.com/free5/get2.php
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+tombir cccambank
+
 #if [ ! -f freereaderek ];then
 #    hiba "Nincs elérhető free szerver!"
 #else
