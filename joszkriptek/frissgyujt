@@ -47,13 +47,14 @@ if [ -f u2d ] ; then
     if [ "$(echo $ujver | grep noupdate)" ];then
         u2dfile="%s \e[1;34m$ujver \e[0m%s"
     else
-        if [ "$ujver" == "$over" ]; then
+        if [[ "$ujver" == "$over" ]]; then
             u2dfile="%s \e[1;32m$ujver \e[0m%s"
         else
             u2dfile="%s \e[1;31m$ujver \e[0m%s"
         fi
     fi
-    if [ ! "$ujver" ];then
+    alfanum=$(echo $ujver | grep -E '^[a-z]')
+    if [[ ! "$ujver" ]] || [[ $alfanum ]] || [[ "$ujver" < "$over" ]] ;then
         u2dfile="%s \e[1;31mu2d hibás! \e[0m%s"
     fi
 fi
@@ -77,7 +78,7 @@ function frissgy() {
                     cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
                 else
                     verziobeszed
-                    if [ ! "$ujver" ];then
+                    if [[ ! "$ujver" ]] || [[ $alfanum ]] || [[ "$ujver" < "$over" ]] ;then
                         mkdir -p $workdir/$frissmappa/u2dhiba
                         cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
                     elif [ ! "$over" == "$ujver" ];then
