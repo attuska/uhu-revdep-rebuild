@@ -63,12 +63,13 @@ fi
 function verziobeszed () {
 u2dfile="Nincs u2d!"
 over=$(cat version)
-szin=redecho
+szin=pirosecho
 ujver=""
 if [ -f u2d ] ; then
     verbe
     szin=normalecho
     if [ "$(cat u2d | grep noupdate)" ];then
+        u2dfile="noupdate"
         szin=kekecho
     else
         if [ "$ujver" == "$over" ]; then
@@ -108,6 +109,10 @@ function frissgy() {
                     cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
                 else
                     verziobeszed
+                    if [ "$szin" == "kekecho" ];then
+                        mkdir -p $workdir/$frissmappa/noupdate
+                        cp -a $gitdir/$nev $workdir/$frissmappa/noupdate
+                    fi
                     if [[ ! "$ujver" ]] || [[ $alfanum ]]; then
                         mkdir -p $workdir/$frissmappa/u2dhiba
                         cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
