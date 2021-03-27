@@ -80,14 +80,14 @@ elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
 tombir
 
 # cccamprima
-webpage=http://cccamprima.com/free5/get2.php
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-tombir
+#webpage=http://cccamprima.com/free5/get2.php
+#elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+#tombir
 
 # cccambank
-webpage=http://cccambank.com/free5/get2.php
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-tombir
+#webpage=http://cccambank.com/free5/get2.php
+#elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+#tombir
 
 if [ ! -f $vdrcardclientconf ];then
     echo "Nincs használható cardclient.conf!"
