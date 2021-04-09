@@ -69,7 +69,7 @@ if [ -f u2d ] ; then
     verbe
     szin=normalecho
     if [ "$(cat u2d | grep noupdate)" ];then
-        u2dfile="noupdate"
+        u2dfile=$(cat version)
         szin=kekecho
     else
         if [ "$ujver" == "$over" ]; then

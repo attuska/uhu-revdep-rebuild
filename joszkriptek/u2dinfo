@@ -41,6 +41,7 @@ if [ -f u2d ] ; then
     fi
     if [ "$(cat u2d | grep noupdate)" ];then
         szin=kekecho
+        u2dfile=$csomagolt
     else
         if [ "$u2dfile" == "$csomagolt" ]; then
             # zöldd
