@@ -18,6 +18,7 @@ function hiba () {
 }
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$' | sed s/.*-//)
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
 fi
@@ -71,13 +72,17 @@ fi
 if [ -d $faileddir ];then
     mkdir -p $faileddir
 fi
-
+if [ -f /usr/bin/build-$diszt ];then
+    disztem=$diszt
+else
+    disztem=$kisdiszt
+fi
 for i in `cat $sorrendfile`; do
     if [ -d $forrdir/$i ]; then
         mv $forrdir/$i ./
         rm -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         set +e
-        build-$diszt -ns -$arch $i
+        build-$disztem -ns -$arch $i
         if [ ! "$debug" ];then
             if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
                 mv $i $faileddir/

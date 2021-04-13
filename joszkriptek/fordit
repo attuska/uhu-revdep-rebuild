@@ -31,9 +31,13 @@ fi
 if [ ! -d $ub ];then
     hiba "Nincs $ub ub"
 fi
-
+if [ -f /usr/bin/build-$diszt ];then
+    disztem=$diszt
+else
+    disztem=$kisdiszt
+fi
 echo "A $ub ub $arch bites fordítása..."
 
-build-$kisdiszt -ns -$arch $ub
+build-$disztem -ns -$arch $ub
 
 rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$ub
