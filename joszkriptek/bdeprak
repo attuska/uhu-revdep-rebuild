@@ -2,16 +2,16 @@
 
 # Az ub git tükrében lévő build-depends, depends
 # analízise alapján helyi gyorsan analizálható mappák és benne fájlok létrehozása
-# a bdep és rdep szkriptek számára.
+# a bdep és rdep szkriptek számára. Paraméter és létező frissek mappa esetén a frissek mappa analízise is
 
 function hiba () {
     echo $1
-    echo "Használat: bdeprak"
+    echo "Használat: bdeprak <akármi>"
     exit 1
 }
 
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
 
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
@@ -31,29 +31,52 @@ rdep=$analdir/rdep
 
 rm -rf $analdir
 mkdir -p $analdir $bdep $rdep
-
+echo "A $gittdir frissítése"
 cd $gittdir
 git pull
-cd -
+cd - >/dev/null
+echo gyorsítótárazás
 for j in `ls -1 $gittdir`;do
-  echo $j
-  touch $bdep/$j
-  touch $rdep/$j
-  for alpkg in `ls -1 $gittdir/$j/packages`;do
-    echo $alpkg >>$analdir/osszpkg
-  done  
-  if [ -f $gittdir/$j/build-depends ];then
-    cat $gittdir/$j/build-depends | sed s/-dev$//g >>$bdep/$j
-  fi
-
-  if [ -f $gittdir/$j/packages/${j}/depends ];then
-    cat $gittdir/$j/packages/${j}/depends | sed s/-dev$//g >>$rdep/$j
-  else
-    for k in `ls $gittdir/$j/packages`;do
-      if [ -f $gittdir/$j/packages/${j}/${k}/depends ];then
-	cat $gittdir/$j/packages/${j}/${k}/depends >>$depends/$j
-	break
-      fi
-    done
-  fi
+    echo -n .
+    if [ ! "$j" == "Build-order" ];then
+        touch $bdep/$j
+        touch $rdep/$j
+        for alpkg in `ls -1 $gittdir/$j/packages`;do
+            echo $alpkg >>$analdir/osszpkg
+        done  
+        if [ -f $gittdir/$j/build-depends ];then
+            cat $gittdir/$j/build-depends | sed s/-dev$//g >>$bdep/$j
+        fi
+        if [ -f $gittdir/$j/packages/${j}/depends ];then
+            cat $gittdir/$j/packages/${j}/depends | sed s/-dev$//g >>$rdep/$j
+        else
+            for k in `ls $gittdir/$j/packages`;do
+            if [ -f $gittdir/$j/packages/${j}/${k}/depends ];then
+                cat $gittdir/$j/packages/${j}/${k}/depends >>$depends/$j
+                break
+            fi
+            done
+        fi
+    fi
 done
+echo
+echo "A bdep,rdep és bdepell parancsok most már használhatók"
+map=frissek
+if [ $1 ] && [ -d $map ];then
+    echo "A $map mappa kiértékelése"
+    if [ -d $map ];then
+        rm -f $map/*.bdeps
+        for mappa in `ls -1 $map`;do
+            echo $mappa
+            for i in `ls -1 $map/$mappa`;do
+                if [ ! "$i" == "u2dhiba" ] || [ -d $map/"$i" ];then
+                    echo $i >>$map/${mappa}.bdeps
+                    if [ -d $map/$mappa/$i ];then
+                        bdep $i >>$map/${mappa}.bdeps
+                    fi
+                echo >>$map/${mappa}.bdeps
+                fi
+            done
+        done
+    fi
+fi
