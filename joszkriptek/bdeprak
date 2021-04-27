@@ -69,7 +69,7 @@ if [ $1 ] && [ -d $map ];then
         for mappa in `ls -1 $map`;do
             echo $mappa
             for i in `ls -1 $map/$mappa`;do
-                if [ ! "$i" == "u2dhiba" ] || [ -d $map/"$i" ];then
+                if [ -d $map/$mappa/$i ] && [ ! "$i" == "u2dhiba" ] && [ ! "$i" == "noupdate" ] ;then
                     echo $i >>$map/${mappa}.bdeps
                     if [ -d $map/$mappa/$i ];then
                         bdep $i >>$map/${mappa}.bdeps
