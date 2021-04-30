@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+# Egy paraméterként megadott csomag mibenviltának lekérdezése
+#!! a bdeprak szkript lefuttatása után használható csak !!
+
+for i in `ls -1`;do
+if [ -d $i ];then
+echo $i
+cd $i
+grep -rI '\-O3' *
+cd ..
+fi
+done
