@@ -10,7 +10,7 @@ function hiba () {
 }
 
 workdir=`pwd`
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
 
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"

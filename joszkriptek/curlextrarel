@@ -17,7 +17,7 @@ function hiba () {
 # Hiba miatti kilépéskor maradhatott fájl törlése
 rm -f tmpfile
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
 
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
