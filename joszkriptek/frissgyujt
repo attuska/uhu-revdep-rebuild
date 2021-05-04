@@ -89,7 +89,7 @@ fi
 if [ "$szin" == "zoldecho" ];then
 echo $nev
 else
-echo -n "$nev"" ""$csomagolt "
+echo -n "$nev"" ""$over > "
 $szin "$u2dfile"
 fi
 }
