@@ -161,7 +161,7 @@ fi
 
 echo "A $gitdir frissítése..."
 cd $gitdir >/dev/null
-#git pull
+git pull
 echo "A  $gitdir aktuális állapotú."
 echo
 cd - >/dev/null
