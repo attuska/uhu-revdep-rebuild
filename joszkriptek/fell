@@ -5,12 +5,12 @@
 
 function hiba () {
     echo $1
-    echo "Használat: fell [<amd64|i386>]"
+    echo "Használat: fell [<amd64|i386>] |<t>]"
     exit 1
 }
 
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5' | sed s/.*-//)
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
 
 if [ ! $diszt ];then
     hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
@@ -27,17 +27,38 @@ else
         arch=$1
     fi
 fi
+rm -f csomaglista
 tukor=/usr/src/UHUBUILD/pkg/$diszt/main/$arch
-if [ ! -d $tukor ];then
-    hiba "Nincs $tukor !"
+lassu=""
+if [ "$1" == "t" ] || [ "$2" == "t" ];then
+    if [ ! -d $tukor ];then
+        echo "Nincs $tukor ! A vizgálat lassú lesz"
+    fi
+    lassu=1
+    curlcim=http://download.ubk.hu/pkg/${diszt}/main/${arch}/
+    lynx -connect_timeout=5 -listonly -dump $curlcim | sed 's%.*/%%g' | grep "uhu"$ > csomaglista
+else
+ls -1 $tukor | grep -E "uhu"$ > csomaglista
 fi
 
-rm -f csomaglista
-ls -1 $tukor | grep -E "uhu"$ > csomaglista
+if [ $lassu ];then
+    tarolo=tavoli
+else
+    tarolo=helyi
+fi
 
 for pkg in `cat csomaglista`;do
-    alldeps=$(dpkg-deb -I $tukor/$pkg | grep Depends: \
+    if [ $lassu ];then
+        cd /tmp
+        wget -q --show-progress $curlcim/$pkg
+        alldeps=$(dpkg-deb -I $pkg | grep Depends: \
+            | sed 's/Depends: //' | sed 's/,/\n/g' | sed 's/^ //g')
+        rm $pkg
+        cd - > /dev/null
+    else
+        alldeps=$(dpkg-deb -I $tukor/$pkg | grep Depends: \
         | sed 's/Depends: //' | sed 's/,/\n/g' | sed 's/^ //g')
+    fi
     novers=$(echo "$alldeps" | sed /\(/d)
     noversions=""
     for i in $novers;do
@@ -49,7 +70,7 @@ for pkg in `cat csomaglista`;do
         van=$(grep ^$de csomaglista)
         if [ ! "$van" ];then
             echo "$de kellene a $pkg csomagnak !" >>hibak
-            echo "$de kellene a $pkg csomagnak, de az nincs a helyi tükörben!"
+            echo "$de kellene a $pkg csomagnak, de az nincs a $tarolo tárolóban!"
             echo "$pkg csomagnak $de lenne az igénye!" >>cshibak
         fi
     done
