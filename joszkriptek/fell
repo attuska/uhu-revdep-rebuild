@@ -65,7 +65,7 @@ for pkg in `cat csomaglista`;do
         noversions=$(echo $noversions" "$(echo ${i}_))
     done
     alldepends=$(echo "$noversions" "$(echo "$alldeps"  | grep -E '\)' \
-        | sed s/\)//g | sed s/\(//g | sed s/\>//g | sed s/=//g | sed 's/  /_/g')" | sed -E 's/ /\n/')
+        | sed s/\)//g | sed s/\(//g | sed s/\>//g | sed s/=//g | sed 's/  /_/g' | sed 's/.://g')" | sed -E 's/ /\n/')
     for de in $alldepends;do
         van=$(grep ^$de csomaglista)
         if [ ! "$van" ];then
