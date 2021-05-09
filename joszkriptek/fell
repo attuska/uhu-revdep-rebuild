@@ -46,7 +46,9 @@ if [ $lassu ];then
 else
     tarolo=helyi
 fi
-
+    cat csomaglista | sed 's/.://g' >tmpfile
+    rm csomaglista
+    mv tmpfile csomaglista
 for pkg in `cat csomaglista`;do
     if [ $lassu ];then
         cd /tmp
