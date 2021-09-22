@@ -18,7 +18,7 @@ fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
-gittem=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gittdir ];then
     hiba "Nincs $gittdir !"
