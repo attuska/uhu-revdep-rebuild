@@ -36,4 +36,10 @@ if [ ! -d $analdir ];then
     hiba "csak a bdeprak szkript futtatása után lehet használn!"
 fi
 
-grep ^$1$ $bdep/* | sed s/:.*//g | sed s%.*\/%%g
+lista=$(grep ^$1$ $bdep/* | sed s/:.*//g | sed s%.*\/%%g)
+for elem in $lista;do
+cd $gittdir/$elem >/dev/null
+u2dinfo
+cd -  >/dev/null
+done
+
