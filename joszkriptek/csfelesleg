@@ -32,7 +32,7 @@ else
     fi
 fi
 # takarítások
-rm -f tmpfile packagelist
+rm -f tmpfile packagelist feleslegek
 
 echo "A $gitdir frissítése"
 
@@ -62,6 +62,7 @@ for csomag in `cat tmpfile`;do
 #    filenev=$(grep ^"${i}"_ tmpfile)
 package=$(echo $csomag  | sed s/_.*//)
 if [ ! "$(grep ^$package$ packagelist)" ];then
+    echo $csomag >>feleslegek  
     echo $csomag
 fi
 done
