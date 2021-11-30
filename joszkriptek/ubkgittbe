@@ -4,35 +4,26 @@
 # A státusz ellenőrzése után mehet a commit és a push.
 # használható az ubk1, ubk2 és ubk3 github helyi tükreinél is.
 
-function hiba () {
-    echo $1
-	exit 1
-}
+# csak a fordítási mappában megy és színes
+. disztbe
 
-workdir=`pwd`
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-
-keszdir=$workdir/keszek
+keszdir=`pwd`/keszek
 if [ ! -d $keszdir ];then
-    hiba "Nincs $keszdir !"
+    pirosecho "Nincs $keszdir mappa!"
+    exit 1
 fi
 
 ubdir=~/gittek/ubk/ub-$kisdiszt
 if [ ! -d $ubdir ];then
-    hiba "Nincs klónozott $ubdir!"
+    pirosecho "Nincs klónozott $ubdir!"
+    exit 1
 fi
 
-echo "A $ubdir aktualizálása..."
+zoldecho "A $ubdir aktualizálása..."
 cd $ubdir
 git pull
 
-echo "A kész ubék elhelyezése..."
+zoldecho "A kész ubék elhelyezése..."
 for i in `ls -1 $keszdir`;do
     rm -rf $i
     cp -r $keszdir/$i ./
@@ -41,4 +32,4 @@ for i in `ls -1 $keszdir`;do
 done
 
 git status
-cd -
+cd - >/dev/null
