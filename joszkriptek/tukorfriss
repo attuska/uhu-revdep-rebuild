@@ -2,19 +2,16 @@
 # Az ubk tároló helyi tükrének szinkronizálása
 
 function hiba () {
-    echo $1
 	echo 'Használat: tukorfriss [ <amd64 | i386>]'
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
+# csak a fordítási mappában megy és színes
+. disztbe
 
 if [[ "$diszt" < "UBK3" ]] && [[ ! $1 ]];then
-    hiba "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+    pirosecho "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+    hiba
 else
     if [[ "$diszt" > "UBK2" ]];then
         arch=amd64
@@ -22,12 +19,13 @@ else
         arch=$1
     fi
 fi
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
 tukor=/usr/src/UHUBUILD/pkg/$diszt/main/
 
 if [ ! -d $tukor ];then
-    hiba "Nincs $tukor/$arch mappa"
+    pirosecho "Nincs $tukor/$arch mappa"
+    exit 1
 fi
-
+zoldecho "A $tukor/$arch mappa szinkronizálása..."
+echo
 rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$arch $tukor
