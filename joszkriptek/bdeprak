@@ -4,27 +4,8 @@
 # analízise alapján helyi gyorsan analizálható mappák és benne fájlok létrehozása
 # a bdep és rdep szkriptek számára. Paraméter és létező frissek mappa esetén a frissek mappa analízise is
 
-piros="$(echo -ne '\e[01;31m')"
-kek="$(echo -ne '\e[01;34m')"
-zold="$(echo -ne '\e[00;32m')"
-normal="$(echo -ne '\e[00;00m')"
-
-colorecho ()
-{
-	if [ -t 1 ]; then
-		echo -ne "$1"
-	fi
-	shift
-	echo "$@"
-	if [ -t 1 ]; then
-		echo -ne "$normal"
-	fi
-}
-
-pirosecho   () { colorecho "$piros"   "$@"; }
-kekecho  () { colorecho "$kek"  "$@"; }
-zoldecho () { colorecho "$zold" "$@"; }
-normalecho () { colorecho "$normal" "$@"; }
+# színeket használunk
+. szinek
 
 function hiba () {
     echo $1

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# színeket használunk
+. szinek
+
+diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
+disztell=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$'  | sed s/.*-// | sed s/UBK.//)
+if [ $disztell ] || [ ! $diszt ];then
+    pirosecho  "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+fi
+kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
