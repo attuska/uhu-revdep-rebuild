@@ -5,27 +5,22 @@
 #!! a bdeprak szkript lefuttatása után használható csak !!
 
 function hiba () {
-    echo $1
     echo "Használat: bdep <csomag>"
     exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
+# csak a fordítási mappában megy és színes
+. disztbe
 
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-
-gittdir=~/gittek/ubk/ub-$kisdiszt
+gittem=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gittdir ];then
     hiba "Nincs $gittdir !"
 fi
 
 if [ ! "$1" ];then
-    hiba "Nincs megadva egy csomag sem!"
+    pirosecho "Nincs megadva egy csomag sem!"
+    hiba
 fi
 
 analdir=(`pwd`/devanal)
@@ -33,7 +28,8 @@ bdep=$analdir/bdep
 rdep=$analdir/rdep
 
 if [ ! -d $analdir ];then
-    hiba "csak a bdeprak szkript futtatása után lehet használn!"
+    pirosecho "csak a bdeprak szkript futtatása után lehet használn!"
+    hiba
 fi
 
 grep ^$1$ $bdep/* | sed s/:.*//g | sed s%.*\/%%g

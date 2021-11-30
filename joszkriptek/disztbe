@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# Leellenőrzi a futtatási künyvtárat, ha az nem a fordítási, akkor visszaüzen.
+# Kimenő paraméter a kisdiszt és a diszt, ha a futtatási könyvtár a fordítási, akkor a diszt értéke UBK(1|2|3|4|5)
+# A ksidiszt értéke egyanez, csak kisbetűs.
+
 # színeket használunk
 . szinek
 
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
 disztell=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$'  | sed s/.*-// | sed s/UBK.//)
 if [ $disztell ] || [ ! $diszt ];then
-    pirosecho  "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
+    pirosecho  "Csak az UHUBUILD/UB-* könyvtárban futtatható a szkript!"
+    exit 1
 fi
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
