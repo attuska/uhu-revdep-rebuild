@@ -1,19 +1,13 @@
 #!/bin/bash -e
 
 function hiba () {
-    echo $1
     echo "Használat: fordit <ub> [32]"
     echo "32 bites fordításhoz kell 3. paraméterként a 32 megadása"
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+# csak a fordítási mappában megy és színes
+. disztbe
 
 if [ -z "$1" ];then
     hiba "Nincs megadva ub!"
@@ -22,21 +16,23 @@ ub=$1
 if [ "$2" == "32" ];then
     arch="32"
     if [[ "$diszt" > "UBK2" ]];then
-        hiba "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
+        pirosecho "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
+        hiba
     fi
 else
     arch="64"
 fi
 
 if [ ! -d $ub ];then
-    hiba "Nincs $ub ub"
+    pirosecho "Nincs $ub ub"
+    hiba
 fi
 if [ -f /usr/bin/build-$diszt ];then
     disztem=$diszt
 else
     disztem=$kisdiszt
 fi
-echo "A $ub ub $arch bites fordítása..."
+zoldecho "A $ub ub $arch bites fordítása..."
 
 build-$disztem -ns -$arch $ub
 

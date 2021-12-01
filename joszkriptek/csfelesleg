@@ -7,20 +7,8 @@ function hiba () {
 	exit 1
 }
 
-
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$|5$' | sed s/.*-//)
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-workdir=`pwd`
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    hiba "Nincs klónozott $gittdir !"
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 if [[ "$kisdiszt" > ubk2 ]];then
     arch=amd64
@@ -34,13 +22,7 @@ fi
 # takarítások
 rm -f tmpfile packagelist feleslegek
 
-echo "A $gittdir frissítése"
-
-cd $gittdir >/dev/null
-git pull
-cd - >/dev/null
-
-echo "A $gittdir ubéinek packages neveinek összegyűjtése"
+zoldecho "A $gittdir ubéinek packages neveinek összegyűjtése"
 
 for ube in `ls -1 $gittdir`;do
     if [ ! "$ube" == "Build-order" ];then
@@ -49,7 +31,7 @@ for ube in `ls -1 $gittdir`;do
                 echo $packagename >>packagelist
             done
         else
-            echo "Nincs $gittdir/$ube/packages mappa"
+            pirosecho "Nincs $gittdir/$ube/packages mappa"
         fi
     fi
 done
