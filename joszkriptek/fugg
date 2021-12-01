@@ -11,7 +11,7 @@ function hiba () {
 diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
-gitdir=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 forrdir=$1
 ujfagyi=ujfagyi
 if [ ! $diszt ];then
@@ -26,8 +26,8 @@ if [ ! -d $forrdir ];then
     hiba "Nincs $forrdir mappa"
 fi
 
-if [ ! -d $gitdir ];then
-    hiba "Nincs klónozott $gitdir !"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir !"
 fi
 
 #fagyizottakat listája
@@ -39,7 +39,7 @@ fi
 for ub in `ls -1 $forrdir`;do
 echo "$ub"
     for j in `ls -1 $forrdir/$ub/packages/`;do
-        csomi=$(grep ^$j$ $gitdir/*/build-depends | sed s/\\/build-depends.*//g | sed "s|$gitdir\/||g")
+        csomi=$(grep ^$j$ $gittdir/*/build-depends | sed s/\\/build-depends.*//g | sed "s|$gittdir\/||g")
         if [ "$csomi" ];then
             for csom in $csomi;do
             if [ ! "$(echo $freezed | grep "$csom ")" ];then

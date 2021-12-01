@@ -10,13 +10,13 @@ fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 
-ubdir=~/gittek/ubk/ub-$kisdiszt
-if [ ! -d $ubdir ];then
-echo "Nincs klónozott $ubdir !"
+gittdir=~/gittek/ubk/ub-$kisdiszt
+if [ ! -d $gittdir ];then
+echo "Nincs klónozott $gittdir !"
 exit 1
 fi
 
-gitmappa=$ubdir
+gitmappa=$gittdir
 
 workd=~/homok/${kisdiszt}frisse
 frisslista=frisslista

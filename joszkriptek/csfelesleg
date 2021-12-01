@@ -16,10 +16,10 @@ fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
-gitdir=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 
-if [ ! -d $gitdir ];then
-    hiba "Nincs klónozott $gitdir !"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir !"
 fi
 
 if [[ "$kisdiszt" > ubk2 ]];then
@@ -34,22 +34,22 @@ fi
 # takarítások
 rm -f tmpfile packagelist feleslegek
 
-echo "A $gitdir frissítése"
+echo "A $gittdir frissítése"
 
-cd $gitdir >/dev/null
+cd $gittdir >/dev/null
 git pull
 cd - >/dev/null
 
-echo "A $gitdir ubéinek packages neveinek összegyűjtése"
+echo "A $gittdir ubéinek packages neveinek összegyűjtése"
 
-for ube in `ls -1 $gitdir`;do
+for ube in `ls -1 $gittdir`;do
     if [ ! "$ube" == "Build-order" ];then
-        if [ -d $gitdir/$ube/packages ];then
-            for packagename in `ls -1 $gitdir/$ube/packages`;do
+        if [ -d $gittdir/$ube/packages ];then
+            for packagename in `ls -1 $gittdir/$ube/packages`;do
                 echo $packagename >>packagelist
             done
         else
-            echo "Nincs $gitdir/$ube/packages mappa"
+            echo "Nincs $gittdir/$ube/packages mappa"
         fi
     fi
 done

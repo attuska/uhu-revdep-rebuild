@@ -4,20 +4,20 @@
 # csak a fordítási mappában megy és színes
 . disztbe
 
-gitmappa=~/gittek/ubk/ub-${kisdiszt}
+gittdir=~/gittek/ubk/ub-${kisdiszt}
 osszubrend=osszubrend
 rm -f $osszubrend
 
-if [ ! -d $gitmappa ];then
-    pirosecho "Nincs klónozott $gitmappa"
+if [ ! -d $gittdir ];then
+    pirosecho "Nincs klónozott $gittdir"
     exit 1
 fi
-zoldecho "A $gitmappa aktualizálása..."
-cd $gitmappa
+zoldecho "A $gittdir aktualizálása..."
+cd $gittdir
 git pull
 cd - >/dev/null
 
 kekecho "Az összefűzött fordítási sorrendfájl a $osszubrend fájl"
-for i in `ls -1 $gitmappa/Build-order/*.txt | sort -V`;do
+for i in `ls -1 $gittdir/Build-order/*.txt | sort -V`;do
     cat $i >>$osszubrend
 done

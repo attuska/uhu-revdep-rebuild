@@ -12,7 +12,7 @@ function hiba () {
 # csak a fordítási mappában megy és színes
 . disztbe
 
-gittem=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 
 if [ ! -d $gittdir ];then
     hiba "Nincs $gittdir !"

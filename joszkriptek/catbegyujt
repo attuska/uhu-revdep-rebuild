@@ -22,10 +22,10 @@ if [ ! -f "$1" ];then
 fi
 
 listafajl=$1
-gitmappa=~/gittek/ubk/ub-${kisdiszt}
+gittdir=~/gittek/ubk/ub-${kisdiszt}
 
-if [ ! -d $gitmappa ];then
-    hiba "Nincs klónozott $gitmappa !"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir !"
 fi
 
 ubmappa=$listafajl-ub
@@ -34,10 +34,10 @@ rm -rf $ubmappa
 mkdir -p $ubmappa
 
 echo gittmapa aktualizálása
-cd $gitmappa
+cd $gittdir
 git pull
 cd -
 
 for i in `cat $listafajl | sed s/#.*//g`;do
-    cp -r $gitmappa/$i $ubmappa/$i
+    cp -r $gittdir/$i $ubmappa/$i
 done

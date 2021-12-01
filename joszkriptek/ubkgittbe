@@ -13,14 +13,14 @@ if [ ! -d $keszdir ];then
     exit 1
 fi
 
-ubdir=~/gittek/ubk/ub-$kisdiszt
-if [ ! -d $ubdir ];then
-    pirosecho "Nincs klónozott $ubdir!"
+gittdir=~/gittek/ubk/ub-$kisdiszt
+if [ ! -d $gittdir ];then
+    pirosecho "Nincs klónozott $gittdir!"
     exit 1
 fi
 
-zoldecho "A $ubdir aktualizálása..."
-cd $ubdir
+zoldecho "A gittdir aktualizálása..."
+cd $gittdir
 git pull
 
 zoldecho "A kész ubék elhelyezése..."

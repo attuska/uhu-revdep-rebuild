@@ -9,19 +9,19 @@ function hiba () {
 
 # csak a fordítási mappában megy és színes
 . disztbe
-gitmappa=~/gittek/ubk/ub-${kisdiszt}
+gittdir=~/gittek/ubk/ub-${kisdiszt}
 
-if [ ! -d $gitmappa ];then
-    pirosecho "Nincs klónozott $gitmappa"
+if [ ! -d $gittdir ];then
+    pirosecho "Nincs klónozott $gittdir"
     hiba
 fi
-if [ ! -d $gitmappa/$1 ];then
+if [ ! -d $gittdir/$1 ];then
     pirosecho "nincs $1 ubmappa"
     hiba
 fi
-leiras=$(cat $gitmappa/$1/packages/$1/summary/hu)
-szekcio=$(cat $gitmappa/$1/packages/$1/section)
-acquire=$(cat $gitmappa/$1/acquire)
+leiras=$(cat $gittdir/$1/packages/$1/summary/hu)
+szekcio=$(cat $gittdir/$1/packages/$1/section)
+acquire=$(cat $gittdir/$1/acquire)
 zoldecho "$1 -- $leiras"
 kekecho "Szekció -- $szekcio"
 echo $acquire

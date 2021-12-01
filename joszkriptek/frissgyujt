@@ -82,29 +82,29 @@ function frissgy() {
     mkdir -p $frissmappa
     rm -f $listafile-uj $listafile-ujnevek
     for nev in `cat $listafile`;do
-        if [ -d $gitdir/$nev ]; then
-                cd $gitdir/$nev
-                if [ ! -f $gitdir/$nev/u2d ];then
+        if [ -d $gittdir/$nev ]; then
+                cd $gittdir/$nev
+                if [ ! -f $gittdir/$nev/u2d ];then
                     verziobeszed
                     mkdir -p $workdir/$frissmappa/u2dhiany
-                    cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiany
+                    cp -a $gittdir/$nev $workdir/$frissmappa/u2dhiany
                 else
                     verziobeszed
                     if [ "$szin" == "kekecho" ];then
                         mkdir -p $workdir/$frissmappa/noupdate
-                        cp -a $gitdir/$nev $workdir/$frissmappa/noupdate
+                        cp -a $gittdir/$nev $workdir/$frissmappa/noupdate
                     fi
                     if [[ ! "$ujver" ]] || [[ $alfanum ]]; then
                         mkdir -p $workdir/$frissmappa/u2dhiba
-                        cp -a $gitdir/$nev $workdir/$frissmappa/u2dhiba
+                        cp -a $gittdir/$nev $workdir/$frissmappa/u2dhiba
                     elif [ ! "$over" == "$ujver" ];then
-                            cp -a $gitdir/$nev $workdir/$frissmappa
+                            cp -a $gittdir/$nev $workdir/$frissmappa
                             echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
                     fi
                 fi
                 cd - > /dev/null
         else
-            pirosecho "Nincs $gitdir/$nev mappa!"
+            pirosecho "Nincs $gittdir/$nev mappa!"
         fi
     done
     echo
@@ -134,16 +134,16 @@ kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
 
 # Klónozott github ubé tükör kell, ha van, akkor frissítjük
-gitdir=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 
-if [ ! -d $gitdir ];then
-    hiba "Nincs klónozott $gitdir !"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir !"
 fi
 
-zoldecho "A $gitdir frissítése..."
-cd $gitdir >/dev/null
+zoldecho "A $gittdir frissítése..."
+cd $gittdir >/dev/null
 git pull
-echo "A  $gitdir aktuális állapotú."
+echo "A  $gittdir aktuális állapotú."
 echo
 cd - >/dev/null
 

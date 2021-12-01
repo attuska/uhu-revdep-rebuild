@@ -24,23 +24,23 @@ fi
 
 kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
-gitdir=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittek/ubk/ub-$kisdiszt
 
-if [ ! -d $gitdir ];then
-    hiba "Nincs klónozott $gitdir !"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir !"
 fi
 
-echo "A $gitdir frissítése"
-cd $gitdir >/dev/null
+echo "A $gittdir frissítése"
+cd $gittdir >/dev/null
 git pull
 cd - >/dev/null
 
 for i in `cat $listafile`;do
-    if [ -d $gitdir/$i ]; then
-        cd $gitdir/$i >/dev/null
+    if [ -d $gittdir/$i ]; then
+        cd $gittdir/$i >/dev/null
             u2dinfo
         cd - >/dev/null
     else
-        hiba "Nincs $gitdir/$i mappa!"
+        hiba "Nincs $gittdir/$i mappa!"
     fi
 done

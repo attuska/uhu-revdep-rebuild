@@ -30,15 +30,15 @@ fi
 curlcim=http://download.ubk.hu/pkg/$diszt/main/$arch/
 
 # helyi github tükör
-gittek=~/gittek/ubk/ub-$kisdiszt
+gittdir=~/gittdir/ubk/ub-$kisdiszt
 
-if [ ! -d $gittek ];then
-    hiba "Nincs klónozott $gittek tükör!"
+if [ ! -d $gittdir ];then
+    hiba "Nincs klónozott $gittdir tükör!"
 fi
 
 #aktualizálás
-echo "A $gittek frissítése"
-cd $gittek
+echo "A $gittdir frissítése"
+cd $gittdir
 git pull
 cd -
 
@@ -58,7 +58,7 @@ cat csomaglista | sed s/_.*//g | sed s/.*\\///g >>keszcsomagok
 cat csomaglista | sed s/.*\\///g >>keszcsomagnevek
 
 #Build-ordersorok mappája
-ordermappa=$gittek/Build-order
+ordermappa=$gittdir/Build-order
 
 #végiglépümk majd minden egyes fordítási soron
 for ordertext in `ls -1 $ordermappa/*.txt`;do
@@ -67,15 +67,15 @@ for ordertext in `ls -1 $ordermappa/*.txt`;do
     mappanev=$nincs/$(echo $ordertext | sed s/.*\\///g | sed s/\.txt//g)
     #ub név kihámozása a fordítási sorrend fájlból
     for ubnev in `cat $ordertext | sed s/#.*//g`;do
-        if [ ! -d $gittek/$ubnev ];then
+        if [ ! -d $gittdir/$ubnev ];then
             echo "$ordertext -ben van, a githubon nincs $ubnev" >>$nincs/Build-order-felesleg
             echo "$ordertext -ben van, a githubon nincs $ubnev"
         else
             van=igen #feltételezzük, hogy már elkészült
             #a csomag githubos verzója
-            ubver=$(cat $gittek/$ubnev/version)
+            ubver=$(cat $gittdir/$ubnev/version)
             #bináris csomagnevek az ub packages mappájának tartalma alapján
-            for csomagnev in `ls -1 $gittek/$ubnev/packages`;do
+            for csomagnev in `ls -1 $gittdir/$ubnev/packages`;do
                 if [ ! "$(grep ^${csomagnev}$ keszcsomagok)" ];then
                     van="" #nincs kész, kilépünk
                     break
@@ -93,7 +93,7 @@ for ordertext in `ls -1 $ordermappa/*.txt`;do
         if [ ! "$van" ];then
             #nincs kész, tehát bemásoljuk az ubét a hiánygyűjtő helyre
             mkdir -p $mappanev
-            cp -a $gittek/$ubnev $mappanev/
+            cp -a $gittdir/$ubnev $mappanev/
             mkdir -p $mappanev/$ubnev/sources
         fi
     done
