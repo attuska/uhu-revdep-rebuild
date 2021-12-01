@@ -10,36 +10,35 @@
 # 32 bites fordításhoz meg kell adni egy "32" paramétert.
 
 function hiba () {
-    echo $1
 	echo 'Használat: sorfordit <sorrendfájl> [32|deb] [32|deb]'
 	echo 'Ha valamelyik paraméter 32, akkor 32 bites fordítás lesz'
 	echo 'Ha valamelyik paraméter "deb", akkor a fordítási sorozat hiba esetén leáll'
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
+# csak a fordítási mappában megy és színes
+. disztbe
 
 workdir=`pwd`
 
 if [ -z "$1" ];then
-    hiba "Parancssori paraméter kell!"
+    pirosecho "Parancssori paraméter kell!"
+    hiba
 else
     sorfile=$1
     sorrendfile=$workdir/$sorfile
 fi
 if [ ! -f $sorrendfile ];then
-    hiba "Nincs $sorfile nevű fordítási sorrendfájl"
+    pirosecho "Nincs $sorfile nevű fordítási sorrendfájl"
+    hiba
 fi
 
 if [ "$2" == "32" ] || [ "$3" == "32" ];then
     archdir=i386
     arch=32
     if [[ "$diszt" > "UBK2" ]];then
-        hiba "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
+        pirosecho "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
+        hiba
     fi
 
 else
@@ -58,11 +57,13 @@ faileddir=$workdir/failed
 celdir=$workdir/keszek
 
 if [ ! -d $forrdir ];then
-    hiba "Nincs $forrdir mappa"
+    pirosecho "Nincs $forrdir mappa"
+    hiba
 fi
 
 if [ -z "$(ls -A $forrdir)" ]; then
-    hiba "A $forrdir mappa üres"
+    pirosecho "A $forrdir mappa üres"
+    hiba
 fi
 
 # Mappagyártás, ha nincs
@@ -100,4 +101,4 @@ for i in `cat $sorrendfile`; do
         rm -rf $pkgdir/ub
     fi
 done
-echo "A $forrdir mappa nem tartalmaz a(z) $sorfile szerint fordítható elemet."
+kekecho "A $forrdir mappa nem tartalmaz a(z) $sorfile szerint fordítható elemet."

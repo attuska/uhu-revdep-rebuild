@@ -4,22 +4,16 @@
 # A észlelt hiányosságok a csujra és a fugghibak fájlokban lesznek felsorolva
 
 function hiba () {
-    echo $1
     echo "Használat: fell [<amd64|i386>] |<t>]"
     exit 1
 }
 
-
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+# csak a fordítási mappában megy és színes
+. disztbe
 
 if [[ "$diszt" < "UBK3" ]] && [[ ! $1 ]];then
-    hiba "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+    pirosecho "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+    hiba
 else
     if [[ "$diszt" > "UBK2" ]];then
         arch=amd64
@@ -32,7 +26,7 @@ tukor=/usr/src/UHUBUILD/pkg/$diszt/main/$arch
 lassu=""
 if [ "$1" == "t" ] || [ "$2" == "t" ];then
     if [ ! -d $tukor ];then
-        echo "Nincs $tukor ! A vizgálat lassú lesz"
+        kekecho "Nincs $tukor ! A vizgálat lassú lesz"
     fi
     lassu=1
     curlcim=http://download.ubk.hu/pkg/${diszt}/main/${arch}/
@@ -72,7 +66,7 @@ for pkg in `cat csomaglista`;do
         van=$(grep ^$de csomaglista)
         if [ ! "$van" ];then
             echo "$de kellene a $pkg csomagnak !" >>hibak
-            echo "$de kellene a $pkg csomagnak, de az nincs a $tarolo tárolóban!"
+            pirosecho "$de kellene a $pkg csomagnak, de az nincs a $tarolo tárolóban!"
             echo "$pkg csomagnak $de lenne az igénye!" >>cshibak
         fi
     done
