@@ -4,8 +4,8 @@
 # A státusz ellenőrzése után mehet a commit és a push.
 # használható az ubk1, ubk2 és ubk3 github helyi tükreinél is.
 
-# csak a fordítási mappában megy és színes
-. disztbe
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 keszdir=`pwd`/keszek
 if [ ! -d $keszdir ];then
@@ -13,17 +13,8 @@ if [ ! -d $keszdir ];then
     exit 1
 fi
 
-gittdir=~/gittek/ubk/ub-$kisdiszt
-if [ ! -d $gittdir ];then
-    pirosecho "Nincs klónozott $gittdir!"
-    exit 1
-fi
-
-zoldecho "A gittdir aktualizálása..."
-cd $gittdir
-git pull
-
 zoldecho "A kész ubék elhelyezése..."
+cd $gittdir
 for i in `ls -1 $keszdir`;do
     rm -rf $i
     cp -r $keszdir/$i ./

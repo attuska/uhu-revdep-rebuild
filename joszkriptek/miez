@@ -7,14 +7,9 @@ function hiba () {
 	exit 1
 }
 
-# csak a fordítási mappában megy és színes
-. disztbe
-gittdir=~/gittek/ubk/ub-${kisdiszt}
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
-if [ ! -d $gittdir ];then
-    pirosecho "Nincs klónozott $gittdir"
-    hiba
-fi
 if [ ! -d $gittdir/$1 ];then
     pirosecho "nincs $1 ubmappa"
     hiba

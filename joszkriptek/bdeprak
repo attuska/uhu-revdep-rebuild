@@ -9,15 +9,8 @@ function hiba () {
     exit 1
 }
 
-# csak a fordítási mappában megy és színes
-. disztbe
-
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    pirosecho "Nincs $gittdir !"
-    hiba
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 analdir=(`pwd`/devanal)
 bdep=$analdir/bdep
@@ -25,11 +18,6 @@ rdep=$analdir/rdep
 
 rm -rf $analdir
 mkdir -p $analdir $bdep $rdep
-zoldecho "A $gittdir frissítése..."
-cd $gittdir
-git pull
-cd - >/dev/null
-echo
 zoldecho gyorsítótárazás...
 for j in `ls -1 $gittdir`;do
     echo -n .

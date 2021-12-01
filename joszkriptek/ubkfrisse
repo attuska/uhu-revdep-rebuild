@@ -1,20 +1,8 @@
 #!/bin/bash
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagok ubéit.
 
-workdir=`pwd`
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|1$\|2$\|3$\|4$' | sed s/.*-//)
-if [ ! $diszt ];then
-echo "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-exit 1
-fi
-
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-
-gittdir=~/gittek/ubk/ub-$kisdiszt
-if [ ! -d $gittdir ];then
-echo "Nincs klónozott $gittdir !"
-exit 1
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 gitmappa=$gittdir
 

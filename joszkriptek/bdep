@@ -9,14 +9,8 @@ function hiba () {
     exit 1
 }
 
-# csak a fordítási mappában megy és színes
-. disztbe
-
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    hiba "Nincs $gittdir !"
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 if [ ! "$1" ];then
     pirosecho "Nincs megadva egy csomag sem!"

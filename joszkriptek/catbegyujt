@@ -2,41 +2,29 @@
 # A listafájl paraméterben felsorolt ubéket elhelyezi a $listafajl-ub mappába
 
 function hiba () {
-    echo $1
     echo "Használat: catbegyujt <listafájl> [32]"
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 if [ -z "$1" ]; then
-    hiba listafájl paraméter kell;
+    pirosecho listafájl paraméter kell;
+    hiba
 fi
 
 if [ ! -f "$1" ];then
-    hiba "A $1 fájl nem létezik!"
+    pirosecho "A $1 fájl nem létezik!"
+    hiba
 fi
 
 listafajl=$1
-gittdir=~/gittek/ubk/ub-${kisdiszt}
-
-if [ ! -d $gittdir ];then
-    hiba "Nincs klónozott $gittdir !"
-fi
 
 ubmappa=$listafajl-ub
 
 rm -rf $ubmappa
 mkdir -p $ubmappa
-
-echo gittmapa aktualizálása
-cd $gittdir
-git pull
-cd -
 
 for i in `cat $listafajl | sed s/#.*//g`;do
     cp -r $gittdir/$i $ubmappa/$i

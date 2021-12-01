@@ -1,21 +1,11 @@
 #!/bin/bash
 # A fordítási sorrendfájlok összefűzése
 
-# csak a fordítási mappában megy és színes
-. disztbe
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
-gittdir=~/gittek/ubk/ub-${kisdiszt}
 osszubrend=osszubrend
 rm -f $osszubrend
-
-if [ ! -d $gittdir ];then
-    pirosecho "Nincs klónozott $gittdir"
-    exit 1
-fi
-zoldecho "A $gittdir aktualizálása..."
-cd $gittdir
-git pull
-cd - >/dev/null
 
 kekecho "Az összefűzött fordítási sorrendfájl a $osszubrend fájl"
 for i in `ls -1 $gittdir/Build-order/*.txt | sort -V`;do

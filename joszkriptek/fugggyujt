@@ -3,37 +3,25 @@
 #
 
 function hiba () {
-    echo $1
 	echo 'Használat: fugggyujt <listamappa>'
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-workdir=`pwd`
-gittdir=~/gittek/ubk/ub-$kisdiszt
-forrdir=$1
-
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 if [ ! "$1" ];then
+    pirosecho "mappa paraméter kell!"
     hiba
 fi
 
+forrdir=$1
+
 if [ ! -d $forrdir ];then
-    hiba "Nincs $forrdir mappa"
+    pirosecho "Nincs $forrdir mappa"
+    hiba
 fi
 
-if [ ! -d $gittdir ];then
-    hiba "Nincs klónozott $gittdir !"
-fi
-
-echo "A $gittdir frissítése"
-cd $gittdir >/dev/null
-git pull
-cd - >/dev/null
 
 ujrakell=ujraforditani
 rm -rf $ujrakell
