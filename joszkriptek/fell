@@ -52,6 +52,7 @@ for pkg in `cat csomaglista`;do
         rm $pkg
         cd - > /dev/null
     else
+        echo -n .
         alldeps=$(dpkg-deb -I $tukor/$pkg | grep Depends: \
         | sed 's/Depends: //' | sed 's/,/\n/g' | sed 's/^ //g')
     fi
@@ -65,14 +66,24 @@ for pkg in `cat csomaglista`;do
     for de in $alldepends;do
         van=$(grep ^$de csomaglista)
         if [ ! "$van" ];then
+            deto=$(echo $de | sed s/_.*//)
+            vande=$(grep $deto csomaglista | sed s/-.*//)
+            if [ "$van" \> "$vande" ];then
+            echo "$de kellene a $pkg csomagnak, de az nincs a $tarolo tárolóban!"
             echo "$de kellene a $pkg csomagnak !" >>hibak
             pirosecho "$de kellene a $pkg csomagnak, de az nincs a $tarolo tárolóban!"
             echo "$pkg csomagnak $de lenne az igénye!" >>cshibak
+            fi
         fi
     done
 done
+zoldecho "Az ellenőrzés végetért"
+if [ -f hibak ];then
 cat hibak | sort -u >fugghibak
-cat cshibak | sort -u >csujra
 rm -f hibak
+fi
+if [ -f cshibak ];then
+cat cshibak | sort -u >csujra
 rm -f cshibak
+fi
 rm -f csomaglista
