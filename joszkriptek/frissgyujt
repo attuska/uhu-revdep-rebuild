@@ -1,13 +1,12 @@
 #!/bin/bash
 # Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
 
-# színeket használunk
-. szinek
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 # hibakezelés
 # kiírja a paramétert és a használati útmutatót, majd kilép.
 function hiba () {
-    pirosecho $1
 	echo 'Használat: frissgyujt < listafájl | mappa >'
 	exit 1
 }
@@ -122,35 +121,15 @@ function frissgy() {
 
 # Paraméter kell!
 if [ ! "$1" ]; then
-    hiba "Nincs listafájl, vagy mappa paraméter!"
+    pirosecho "Nincs listafájl, vagy mappa paraméter!"
+    hiba
 fi
-
-# Csak a fejlesztői mappában futtatható
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$\|5$' | sed s/.*-//)
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
-workdir=`pwd`
-
-# Klónozott github ubé tükör kell, ha van, akkor frissítjük
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    hiba "Nincs klónozott $gittdir !"
-fi
-
-zoldecho "A $gittdir frissítése..."
-cd $gittdir >/dev/null
-git pull
-echo "A  $gittdir aktuális állapotú."
-echo
-cd - >/dev/null
 
 ujver=global
 
 mappa=$1
 
+workdir=`pwd`
 if [ -f $1 ];then # Létező fájl a paraméter
     frissmappa=$(echo $1 | sed s%.*/%%g)-friss
     rm -rf $workdir/$frissmappa
@@ -174,5 +153,6 @@ elif [ -d $mappa ];then # Létező mappa a paraméter
         fi
     done
 else
-    hiba "létező listafájl, vagy listafájlokat tartalmazó mappa paraméter kell!"
+    pirosecho "létező listafájl, vagy listafájlokat tartalmazó mappa paraméter kell!"
+    hiba
 fi

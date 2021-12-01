@@ -2,38 +2,26 @@
 #leteszteli terminálban a listafájlban felsorolt csomagok frissíthetőségét
 
 function hiba () {
-    echo $1
 	echo 'Használat: frissteszt <listafájl>'
 	exit 1
 }
 
-diszt=$(pwd | grep '/usr/src/UHUBUILD/UB-UBK\|UBK1$\|2$\|3$\|4$' | sed s/.*-//)
-if [ ! $diszt ];then
-    hiba "Csak az UHUBUILD/UB-* könyvtárba lépve futtatható a szkript!"
-fi
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
 
 if [ ! "$1" ]; then
-	hiba "listafájl paranéter kell!"
+	pirosecho "listafájl paranéter kell!"
+	hiba
 fi
 
 listafile=$1
 
 if [ ! -f $listafile ];then
-    hiba "Nincs $listafile listafájl!"
+    pirosecho "Nincs $listafile listafájl!"
+    hiba
 fi
 
-kisdiszt=$(echo $diszt | tr [:upper:] [:lower:])
 workdir=`pwd`
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    hiba "Nincs klónozott $gittdir !"
-fi
-
-echo "A $gittdir frissítése"
-cd $gittdir >/dev/null
-git pull
-cd - >/dev/null
 
 for i in `cat $listafile`;do
     if [ -d $gittdir/$i ]; then
@@ -41,6 +29,7 @@ for i in `cat $listafile`;do
             u2dinfo
         cd - >/dev/null
     else
-        hiba "Nincs $gittdir/$i mappa!"
+        pirosecho "Nincs $gittdir/$i mappa!"
+        hiba
     fi
 done
