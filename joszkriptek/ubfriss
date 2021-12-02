@@ -18,3 +18,4 @@ zoldecho "A $gittdir frissítése..."
 cd $gittdir >/dev/null
 git pull
 cd - >/dev/null
+zoldecho "A $gittdir aktuális..."
