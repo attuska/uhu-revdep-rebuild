@@ -9,8 +9,8 @@ function hiba () {
     exit 1
 }
 
-# csak a fordítási mappában megy és színes és ub tároló frissül
-. ubfriss
+# csak a fordítási mappában megy és színes
+. disztbe
 
 if [ ! "$1" ];then
     pirosecho "Nincs megadva egy csomag sem!"
