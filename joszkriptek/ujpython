@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# színeket használunk
+. szinek
+
+function hiba () {
+    pirosecho "Nincs megadva csomagnév"
+    exit 1
+}
+
+if [ -z "$1" ]; then
+    hiba
+fi
+pkgname=$1
+
+# tisztítás
+rm -rf $pkgnaem
+
+# mappagyár
+mkdir -p $pkgname/packages/$pkgname/summary
+mkdir -p $pkgname/patches
+mkdir -p $pkgname/sources
+
+echo $pkgname > $pkgname/sourcename
+echo Libraries > $pkgname/packages/$pkgname/section
+echo "UHU Linux Baráti Kör" > $pkgname/vendor
+echo 1 >$pkgname/release
+echo 'LICENSE*' > $pkgname/doc
+echo 'README*' >> $pkgname/doc
+echo 'UHU-Linux UBK3' > $pkgname/distribution
+echo 'Kiss Attila <attus@enterpriseforever.com>' > $pkgname/maintainer
+touch $pkgname/packages/$pkgname/depends
+touch $pkgname/packages/$pkgname/summary/hu
+touch $pkgname/build-depends
+touch $pkgname/distribution
+touch $pkgname/homepage
+touch $pkgname/version
+echo '#!/usr/bin/env dl' > $pkgname/acquire
+echo >> $pkgname/acquire
+echo '${UB_VERSION}.tar.gz '"$pkgname"'-${UB_VERSION}/' >> $pkgname/acquire
+echo '	' >> $pkgname/acquire
+echo '#!/bin/sh -eux' > $pkgname/install
+echo >> $pkgname/install
+cp $pkgname/install $pkgname/compile
+echo 'python3 setup.py build' >> $pkgname/compile
+echo 'python3 setup.py install --root=${UB_INSTALLDIR} --skip build' >> $pkgname/install
+echo 'u2d ' >$pkgname/u2d
+chmod +x $pkgname/acquire $pkgname/compile $pkgname/install
