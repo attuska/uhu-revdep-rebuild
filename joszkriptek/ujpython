@@ -11,10 +11,10 @@ function hiba () {
 if [ -z "$1" ]; then
     hiba
 fi
-pkgname=$1
-
+name=$1
+pkgname=python3-$name
 # tisztítás
-rm -rf $pkgnaem
+rm -rf $pkgname
 
 # mappagyár
 mkdir -p $pkgname/packages/$pkgname/summary
@@ -29,20 +29,21 @@ echo 'LICENSE*' > $pkgname/doc
 echo 'README*' >> $pkgname/doc
 echo 'UHU-Linux UBK3' > $pkgname/distribution
 echo 'Kiss Attila <attus@enterpriseforever.com>' > $pkgname/maintainer
+echo 'python3-setuptools' > $pkgname/build-depends
+echo 'u2dpypi '"$name" >$pkgname/u2d
+
 touch $pkgname/packages/$pkgname/depends
 touch $pkgname/packages/$pkgname/summary/hu
-touch $pkgname/build-depends
 touch $pkgname/distribution
 touch $pkgname/homepage
 touch $pkgname/version
 echo '#!/usr/bin/env dl' > $pkgname/acquire
 echo >> $pkgname/acquire
-echo '${UB_VERSION}.tar.gz '"$pkgname"'-${UB_VERSION}/' >> $pkgname/acquire
-echo '	' >> $pkgname/acquire
+echo "$name"'-${UB_VERSION}.tar.gz '"$name"'-${UB_VERSION}/' >> $pkgname/acquire
+echo '	https://files.pythonhosted.org/packages/source/'"${name:0:1}/$name/" >> $pkgname/acquire
 echo '#!/bin/sh -eux' > $pkgname/install
 echo >> $pkgname/install
 cp $pkgname/install $pkgname/compile
 echo 'python3 setup.py build' >> $pkgname/compile
 echo 'python3 setup.py install --root=${UB_INSTALLDIR} --skip build' >> $pkgname/install
-echo 'u2d ' >$pkgname/u2d
 chmod +x $pkgname/acquire $pkgname/compile $pkgname/install
