@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# színeket használunk
-. szinek
+# csak a fordítási mappában megy és színes
+. disztbe
+
+gittdir=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gittdir ];then
+    pirosecho "Nincs $gittdir !"
+    exit 1
+fi
 
 function hiba () {
     pirosecho "Nincs megadva csomagnév"
@@ -11,31 +18,41 @@ function hiba () {
 if [ -z "$1" ]; then
     hiba
 fi
-pkgname=$1
-tempname=$(echo $pkgname | sed 's/-/ /g')
+name=$1
+pkgname=perl-$name
+
+cd $gittdir
+if [ "$(ls -1 | grep ^$pkgname$)" ];then
+pirosecho A $pkgname már létezik !
+exit 1
+else
+echo
+echo A $pkgname ubé váz elkészítese
+echo
+fi
+cd - >/dev/null
+
 perlname=""
-for i in $tempname ;do
+for i in $(echo $name | sed 's/-/ /g') ;do
     perlname=$perlname-${i^}
 done
 perlname=${perlname#?}
 perlname2=$(echo $perlname | sed s/-/::/g)
 mkdir -p $pkgname/packages/$pkgname/summary
 mkdir -p $pkgname/sources
-
 echo $pkgname > $pkgname/sourcename
 echo Libraries > $pkgname/packages/$pkgname/section
 echo "UHU Linux Baráti Kör" > $pkgname/vendor
 echo 1 >$pkgname/release
 echo 'LICENSE*' > $pkgname/doc
 echo 'README*' >> $pkgname/doc
-echo 'UHU-Linux UBK3' > $pkgname/distribution
+echo "UHU-Linux $diszt" > $pkgname/distribution
 echo 'Kiss Attila <attus@enterpriseforever.com>' > $pkgname/maintainer
 echo 'u2dcpan '"$perlname2" >$pkgname/u2d
 echo "https://metacpan.org/pod/${perlname2}/" > $pkgname/homepage
-touch $pkgname/packages/$pkgname/depends
 echo "&perl modul" > $pkgname/packages/$pkgname/summary/hu
-touch $pkgname/distribution
 touch $pkgname/version
+touch $pkgname/packages/$pkgname/depends
 echo '#!/usr/bin/env dl' > $pkgname/acquire
 echo >> $pkgname/acquire
 echo "$perlname"'-${UB_VERSION}.tar.gz '"$perlname"'-${UB_VERSION}/' >> $pkgname/acquire
@@ -46,3 +63,16 @@ cp $pkgname/install $pkgname/compile
 echo 'ub_compile' >> $pkgname/compile
 echo 'ub_install' >> $pkgname/install
 chmod +x $pkgname/acquire $pkgname/compile $pkgname/install
+kekecho Fordítás előtti teendők:
+pirosecho A summary módosítandó !
+pirosecho Az acquire, homepage fájlok ellenőrizendők !
+pirosecho A depends fáj törlendő, vagy kitöltendő !
+cd $pkgname
+ver=$(uhubuild-u2d)
+if [ $ver ];then
+echo $ver >version
+else
+pirosecho Az u2d fájl módosítandó !
+pirosecho A version fájl kitöltendő !
+fi
+cd - >/dev/null
