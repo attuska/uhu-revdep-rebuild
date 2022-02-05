@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Összegyűjti azokat az ubéket, amelyek alcsomagjai teljesen feleslegesek más csomagok elkészítéséhez, vagy futtatásához, ilyen szempontból kidobandók. Használja a bdep és rdep szkripteket, tehát csak a bdeprak szkript futtatása után használható!
+
+. bdeprak
+
+# takarítás
+rm -f szinglik
+
+#Build-ordersorok mappája
+ordermappa=$gittdir/Build-order
+
+#végiglépümk majd minden egyes fordítási soron
+for ub in `ls -1 $gittdir`;do
+    if [ ! "$ub" == "Build-order" ];then
+        kell=""
+        for alpkg in `ls -1 $gittdir/$ub/packages`;do
+            kell=$(bdep $alpkg)
+            if [ "$kell" ];then
+                break
+            fi
+            kell=$(rdep $alpkg)
+            if [ "$kell" ];then
+                break
+            fi
+        done
+        if [ "$kell" == "" ];then
+            echo $ub
+            echo $ub >>szinglik
+        fi
+    fi
+done
