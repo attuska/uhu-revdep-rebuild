@@ -4,18 +4,11 @@
 # Kimenő paraméter a kisdiszt és a diszt, ha a futtatási könyvtár a fordítási, akkor a diszt értéke UBK(1|2|3|4|5)
 # A ksidiszt értéke egyanez, csak kisbetűs.
 
-# csak a fordítási mappában megy és színes
-. disztbe
-
-gittdir=~/gittek/ubk/ub-$kisdiszt
-
-if [ ! -d $gittdir ];then
-    pirosecho "Nincs $gittdir !"
-    exit 1
-fi
+# alapértékek inicializálása
+. gittdir
 
 zoldecho "A $gittdir frissítése..."
 cd $gittdir >/dev/null
 git pull
 cd - >/dev/null
-zoldecho "A $gittdir aktuális..."
+zoldecho "A $gittdir frissítve..."

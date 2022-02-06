@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Leellenőrzi a futtatási mappát, a git tükör létét, ha az nincs, vagy nem megfelelő, akkor visszaüzen, ha jók,
+# akkor a disztbe modul hívásával színes lehet az echo, valamint a $diszt, $kisdiszt $gittdir változók értéket kapnak.
+
+# csak a fordítási mappában megy és színes
+. disztbe
+
+gittdir=~/gittek/ubk/ub-$kisdiszt
+
+if [ ! -d $gittdir ];then
+    pirosecho "Nincs $gittdir !"
+    exit 1
+fi

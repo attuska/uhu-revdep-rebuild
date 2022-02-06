@@ -16,7 +16,11 @@ if [ ! -d $gittdir/$1 ];then
 fi
 leiras=$(cat $gittdir/$1/packages/$1/summary/hu)
 szekcio=$(cat $gittdir/$1/packages/$1/section)
+version=$(cat $gittdir/$1//version)
 acquire=$(cat $gittdir/$1/acquire)
+homepage=$(cat $gittdir/$1/homepage)
 zoldecho "$1 -- $leiras"
 kekecho "Szekció -- $szekcio"
+zoldecho "Honlap -- $homepage" 
+zoldecho "Verzió -- $version"
 echo $acquire

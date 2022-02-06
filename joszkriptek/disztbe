@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Leellenőrzi a futtatási künyvtárat, ha az nem a fordítási, akkor visszaüzen.
+# A szinek modul beépítésével színes üzeneteket tesz lehetővé, leellenőrzi a futtatási künyvtárat, ha az nem a fordítási, akkor visszaüzen.
 # Kimenő paraméter a kisdiszt és a diszt, ha a futtatási könyvtár a fordítási, akkor a diszt értéke UBK(1|2|3|4|5)
 # A ksidiszt értéke egyanez, csak kisbetűs.
 
