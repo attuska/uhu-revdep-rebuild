@@ -22,8 +22,7 @@ zoldecho gyorsítótárazás...
 for j in `ls -1 $gittdir`;do
     echo -n .
     if [ ! "$j" == "Build-order" ];then
-        touch $bdep/$j
-        touch $rdep/$j
+        touch {$bdep,$rdep}/$j
         for alpkg in `ls -1 $gittdir/$j/packages`;do
             echo $alpkg >>$analdir/osszpkg
         done  
@@ -34,10 +33,10 @@ for j in `ls -1 $gittdir`;do
             cat $gittdir/$j/packages/${j}/depends | sed s/-dev$//g >>$rdep/$j
         else
             for k in `ls $gittdir/$j/packages`;do
-            if [ -f $gittdir/$j/packages/${j}/${k}/depends ];then
-                cat $gittdir/$j/packages/${j}/${k}/depends >>$depends/$j
-                break
-            fi
+                if [ -f $gittdir/$j/packages/${j}/${k}/depends ];then
+                    cat $gittdir/$j/packages/${j}/${k}/depends >>$depends/$j
+                    break
+                fi
             done
         fi
     fi
