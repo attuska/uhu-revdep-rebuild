@@ -52,7 +52,7 @@ echo 'python3-setuptools' > $pkgname/build-depends
 echo 'u2dpypi '"$name" >$pkgname/u2d
 echo "https://pypi.org/project/$name/" > $pkgname/homepage
 touch $pkgname/packages/$pkgname/depends
-echo "&Python3 modulok " $pkgname/packages/$pkgname/summary/hu
+echo "&Python3 modulok " > $pkgname/packages/$pkgname/summary/hu
 touch $pkgname/distribution
 touch $pkgname/version
 echo '#!/usr/bin/env dl' > $pkgname/acquire
