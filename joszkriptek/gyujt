@@ -1,0 +1,23 @@
+#!/bin/bash
+# Összegyűjti a paraméterként megadott listafájlból a frissíthető csomagokat.
+
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
+
+# hibakezelés
+# kiírja a paramétert és a használati útmutatót, majd kilép.
+function hiba () {
+	echo 'Használat: gyujt <mappa >'
+	exit 1
+}
+
+if [ -z "$1" ]; then
+    pirosecho listafájl paraméter kell;
+    hiba
+fi
+mappa=$1
+rm -rf $mappa
+mkdir -p $mappa
+for cim in $(grep git://github.com/ $gittdir/*/acquire | sed s%/acquire.*%%);do
+cp -r $cim $mappa/
+done
