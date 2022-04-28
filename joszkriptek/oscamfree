@@ -122,10 +122,12 @@ webpage=http://cccamprima.com/cccam48h.html
 elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
 tombir cccamprima
 
-# cccambank
-#webpage=http://cccambank.com/free5/get2.php
-#elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-#tombir cccambank
+# cccamamazon
+webpage=https://cccamazon.com/free/get.php
+#if [ "$teszt" ];then 
+elemek=$(curl -s -k $webpage | grep "C:" | sed 's/.*: //' | sed s/\<\\/h1\>//)
+#elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
+tombir cccamamazon
 
 #if [ ! -f freereaderek ];then
 #    hiba "Nincs elérhető free szerver!"
