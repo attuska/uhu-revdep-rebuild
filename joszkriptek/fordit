@@ -13,6 +13,8 @@ if [ -z "$1" ];then
     hiba "Nincs megadva ub!"
 fi
 ub=$1
+uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*//)
+
 if [ "$2" == "32" ];then
     arch="32"
     if [[ "$diszt" > "UBK2" ]];then
@@ -34,6 +36,11 @@ else
 fi
 zoldecho "A $ub ub $arch bites fordítása..."
 
+if [[ "$uhubuildver" < "1.4.0" ]];then
 build-$disztem -ns -$arch $ub
+else
+build-$disztem -ns $ub
+fi
+
 
 rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$ub
