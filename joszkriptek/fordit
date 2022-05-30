@@ -13,8 +13,7 @@ if [ -z "$1" ];then
     hiba "Nincs megadva ub!"
 fi
 ub=$1
-uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*//)
-
+uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*// | sort -V | tail -n 1)
 if [ "$2" == "32" ];then
     arch="32"
     if [[ "$diszt" > "UBK2" ]];then

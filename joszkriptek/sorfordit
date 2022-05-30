@@ -55,6 +55,7 @@ forrdir=$workdir/forrasok
 pkgdir=/usr/src/UHUBUILD/packages-$diszt
 faileddir=$workdir/failed
 celdir=$workdir/keszek
+uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*// | sort -V | tail -n 1)
 
 if [ ! -d $forrdir ];then
     pirosecho "Nincs $forrdir mappa"
@@ -83,7 +84,11 @@ for i in `cat $sorrendfile`; do
         mv $forrdir/$i ./
         rm -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         set +e
-        build-$disztem -ns -$arch $i
+        if [[ "$uhubuildver" < "1.4.0" ]];then
+            build-$disztem -ns -$arch $i
+        else
+            build-$disztem -ns $i
+        fi
         if [ ! "$debug" ];then
             if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
                 mv $i $faileddir/
