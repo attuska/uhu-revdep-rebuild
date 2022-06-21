@@ -1,9 +1,28 @@
 #!/bin/bash -e
 
 function hiba () {
-    echo "Használat: fordit <ub> [32]"
+    echo "Használat: fordit <ub> [32] [la]"
     echo "32 bites fordításhoz kell 3. paraméterként a 32 megadása"
 	exit 1
+}
+
+function keepla {
+    steps="1 2 3"
+    for step in $steps ;do
+    cleanupfile="/var/uhubuild/$diszt/amd64/chroot$step/usr/lib/uhubuild/steps/cleanup"
+        if [ -f $cleanupfile ];then
+            sed 's%# .la%exit 0%' -i $cleanupfile
+        fi
+    done
+}
+function della {
+    steps="1 2 3"
+    for step in $steps ;do
+    cleanupfile="/var/uhubuild/$diszt/amd64/chroot$step/usr/lib/uhubuild/steps/cleanup"
+        if [ -f $cleanupfile ];then
+            sed 's%exit 0%# .la%' -i $cleanupfile
+        fi
+    done
 }
 
 # csak a fordítási mappában megy és színes
@@ -13,15 +32,16 @@ if [ -z "$1" ];then
     hiba "Nincs megadva ub!"
 fi
 ub=$1
-uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*// | sort -V | tail -n 1)
+arch="64"
 if [ "$2" == "32" ];then
     arch="32"
     if [[ "$diszt" > "UBK2" ]];then
         pirosecho "32 bites fordítás csak UBK1/UBK2 esetén végezhető!"
         hiba
     fi
-else
-    arch="64"
+fi
+if [ "$2" == "la" ]; then
+    lakell="la"
 fi
 
 if [ ! -d $ub ];then
@@ -34,12 +54,11 @@ else
     disztem=$kisdiszt
 fi
 zoldecho "A $ub ub $arch bites fordítása..."
-
-if [[ "$uhubuildver" < "1.4.0" ]];then
-build-$disztem -ns -$arch $ub
-else
-build-$disztem -ns $ub
+della
+if [ "$lakell" == "la" ];then
+keepla
 fi
-
+build-$disztem -ns -$arch $ub
+della
 
 rm -rf /usr/src/UHUBUILD/packages-$diszt/ub/$ub
