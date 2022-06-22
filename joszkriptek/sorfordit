@@ -10,10 +10,31 @@
 # 32 bites fordításhoz meg kell adni egy "32" paramétert.
 
 function hiba () {
-	echo 'Használat: sorfordit <sorrendfájl> [32|deb] [32|deb]'
+	echo 'Használat: sorfordit <sorrendfájl> [la|32|deb] [la|32|deb] [la|32|deb] '
 	echo 'Ha valamelyik paraméter 32, akkor 32 bites fordítás lesz'
 	echo 'Ha valamelyik paraméter "deb", akkor a fordítási sorozat hiba esetén leáll'
+	echo 'valamelyik paraméter "la", akkor a fordítás során a *.la fájlok megmaradnak'
 	exit 1
+}
+
+function keepla {
+    steps="1 2 3"
+    for step in $steps ;do
+    cleanupfile="/var/uhubuild/$diszt/amd64/chroot$step/usr/lib/uhubuild/steps/cleanup"
+        if [ -f $cleanupfile ];then
+            sed 's%# .la%exit 0%' -i $cleanupfile
+        fi
+    done
+}
+
+function della {
+    steps="1 2 3"
+    for step in $steps ;do
+    cleanupfile="/var/uhubuild/$diszt/amd64/chroot$step/usr/lib/uhubuild/steps/cleanup"
+        if [ -f $cleanupfile ];then
+            sed 's%exit 0%# .la%' -i $cleanupfile
+        fi
+    done
 }
 
 # csak a fordítási mappában megy és színes
@@ -33,7 +54,7 @@ if [ ! -f $sorrendfile ];then
     hiba
 fi
 
-if [ "$2" == "32" ] || [ "$3" == "32" ];then
+if [ "$2" == "32" ] || [ "$3" == "32" ] || [ "$4" == "32" ] ;then
     archdir=i386
     arch=32
     if [[ "$diszt" > "UBK2" ]];then
@@ -47,15 +68,18 @@ else
 fi
 
 debug=""
-if [ "$2" == "deb" ] || [ "$3" == "deb" ];then
+if [ "$2" == "deb" ] || [ "$3" == "deb" ] || [ "$4" == "deb" ];then
     debug=debug
+fi
+
+if [ "$2" == "la" ] || [ "$3" == "la" ] || [ "$4" == "la" ];then
+    lakell="la"
 fi
 
 forrdir=$workdir/forrasok
 pkgdir=/usr/src/UHUBUILD/packages-$diszt
 faileddir=$workdir/failed
 celdir=$workdir/keszek
-uhubuildver=$(apt-cache show uhubuild  | grep Filename | sed 's/.*uhubuild_//g' | sed s/-.*// | sort -V | tail -n 1)
 
 if [ ! -d $forrdir ];then
     pirosecho "Nincs $forrdir mappa"
@@ -84,11 +108,12 @@ for i in `cat $sorrendfile`; do
         mv $forrdir/$i ./
         rm -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i
         set +e
-        if [[ "$uhubuildver" < "1.4.0" ]];then
-            build-$disztem -ns -$arch $i
-        else
-            build-$disztem -ns $i
+        della
+        if [ "$lakell" == "la" ];then
+            keepla
         fi
+        build-$disztem -ns -$arch $i
+            della
         if [ ! "$debug" ];then
             if [ -f /usr/src/UHUBUILD/misc-$diszt/failed/$archdir/$i ]; then
                 mv $i $faileddir/
