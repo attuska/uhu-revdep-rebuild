@@ -21,7 +21,7 @@ function hiba () {
 }
 
 function webtest () {
-    teszt=""
+#    teszt=""
     teszt=$(curl -Is $1 | grep OK)
     if [ ! "$teszt" ];then
         echo "A $1 weblap nem érhető el!"
@@ -55,20 +55,45 @@ echo "cccreshare = $cccreshare" >>$conffile
 
 #cp -f $confstable $conffile
 
-# ccctamtiger
-webpage="https://cccamtiger.com/fcccam/"
-#if [ "$teszt" ];then 
-elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
-tombir cccamtiger
-#fi
+cimek="https://cccamiptv.club/free-cccam/
+    https://cccameagle.com/fccam/
+    https://www.cccambird2.com/freecccam.php
+    https://www.cccamprime.com/cccam48h.ph
+"
+for webpage in $cimek;do
+nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*//)
+tombir $nev
+done
 
-# cccamstore
-webpage="http://cccamstore.tv/free-server.php"
-webtest $webpage
-if [ "$teszt" ];then 
-    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
-    tombir cccamstore
-fi
+cimek="https://cccam-48h.blogspot.com/p/blog-page_16.html
+    https://premiumcccam.store/freetrial.php
+    https://cccamia.com/free-cccam/
+"
+for webpage in $cimek;do
+nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
+tombir $nev
+done
+
+cimek="https://cccamfrei.com/free/get.php
+    https://cccamprima.com/cccam48h.html
+    https://cccamazon.com/free/get.php
+"
+for webpage in $cimek;do
+nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
+tombir $nev
+done
+
+cimek="https://cccamstore.tv/free-server.php
+    https://cccammax1.weebly.com/cccam-48.html
+"
+for webpage in $cimek;do
+nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
+elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
+tombir $nev
+done
 
 # yosalite
 webpage="https://cccamfree48h.yolasite.com/server-2.php"
@@ -78,62 +103,11 @@ if [ "$teszt" ];then
     tombir yosalite
 fi
 
-#cccam-48h.blogspot.com
-webpage="http://cccam-48h.blogspot.com/p/blog-page_16.html"
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir
-
-# cccammax
-webpage="https://cccammax1.weebly.com/cccam-48.html"
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
-tombir cccammax
-
-# cccamiptv
-webpage="https://cccamiptv.co/index.php/free-cccam/"
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir cccamiptv
-
-
-# cccamfree
-webpage="https://cccamfrei.com/free/get.php"
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-tombir cccamfree.net
-
-# cccamprime
-webpage="https://www.cccamprime.com/cccam48h.php"
-webtest $webpage
-if [ "$teszt" ];then 
-    elemek=$(curl -s -k $webpage | grep "C: " | sed 's/.*C: //' | sed s/\<.*//)
-    tombir cccamprime
-fi
-
-# premiumcccam.store
-webpage="http://premiumcccam.store/freetrial.php"
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir
-
-#cccamia
-webpage="https://cccamia.com/free-cccam/"
-    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-    tombir
-
-# cccamprima
-webpage=http://cccamprima.com/cccam48h.html
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-tombir cccamprima
-
-# cccamamazon
-webpage=https://cccamazon.com/free/get.php
-#if [ "$teszt" ];then 
-elemek=$(curl -s -k $webpage | grep "C:" | sed 's/.*: //' | sed s/\<\\/h1\>//)
-#elemek=$(curl -s -k $webpage | grep "C :" | sed 's/.*C : //' | sed s/\<.*//)
-tombir cccamamazon
-
-#if [ ! -f freereaderek ];then
-#    hiba "Nincs elérhető free szerver!"
-#else
-#    echo "Az elérhető szerverek oscam readerei a freerederek fájlban vannak felsorolva!"
-#    echo "Ennek tartalma ez:"
-#    echo
+if [ ! -f freereaderek ];then
+    hiba "Nincs elérhető free szerver!"
+else
+    echo "Az elérhető szerverek oscam readerei a freerederek fájlban vannak felsorolva!"
+    echo "Ennek tartalma ez:"
+    echo
 cat freereaderek
-#fi
+fi
