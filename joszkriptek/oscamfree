@@ -21,8 +21,8 @@ function hiba () {
 }
 
 function webtest () {
-#    teszt=""
-    teszt=$(curl -Is $1 | grep OK)
+    teszt=""
+    teszt=$(curl -Is -m 1 $1 | grep OK)
     if [ ! "$teszt" ];then
         echo "A $1 weblap nem érhető el!"
     fi
@@ -58,50 +58,25 @@ echo "cccreshare = $cccreshare" >>$conffile
 cimek="https://cccamiptv.club/free-cccam/
     https://cccameagle.com/fccam/
     https://www.cccambird2.com/freecccam.php
-    https://www.cccamprime.com/cccam48h.ph
-"
-for webpage in $cimek;do
-nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*//)
-tombir $nev
-done
-
-cimek="https://cccam-48h.blogspot.com/p/blog-page_16.html
+    https://www.cccamprime.com/cccam48h.php
+    https://cccam-48h.blogspot.com/p/blog-page_16.html
     https://premiumcccam.store/freetrial.php
     https://cccamia.com/free-cccam/
-"
-for webpage in $cimek;do
-nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/<.*//')
-tombir $nev
-done
-
-cimek="https://cccamfrei.com/free/get.php
+    https://cccamstore.tv/free-server.php
+    https://cccammax1.weebly.com/cccam-48.html
+    https://cccamfrei.com/free/get.php
     https://cccamprima.com/cccam48h.html
     https://cccamazon.com/free/get.php
+    https://cccamfree48h.yolasite.com/server-2.php
 "
 for webpage in $cimek;do
 nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<\\/h1\>//)
-tombir $nev
-done
-
-cimek="https://cccamstore.tv/free-server.php
-    https://cccammax1.weebly.com/cccam-48.html
-"
-for webpage in $cimek;do
-nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
-elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//')
-tombir $nev
-done
-
-# yosalite
-webpage="https://cccamfree48h.yolasite.com/server-2.php"
 webtest $webpage
-if [ "$teszt" ];then 
-    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed 's/ <.*//' | sed 's/ #.*//')
-    tombir yosalite
+if [ "$teszt" ];then
+    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*// | sed 's/ #.*//')
+    tombir $nev
 fi
+done
 
 if [ ! -f freereaderek ];then
     hiba "Nincs elérhető free szerver!"
