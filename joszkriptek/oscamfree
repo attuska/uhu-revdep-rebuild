@@ -22,7 +22,7 @@ function hiba () {
 
 function webtest () {
     teszt=""
-    teszt=$(curl -Is -m 2 $1 | grep OK)
+    teszt=$(curl -Is -m 3 $1 | grep OK)
     if [ ! "$teszt" ];then
         echo "A $1 weblap nem érhető el!"
     fi
@@ -54,26 +54,30 @@ echo "cccreshare = $cccreshare" >>$conffile
 }
 
 #cp -f $confstable $conffile
+#megszűnt:
+# https://premiumcccam.store/freetrial.php
+
+# változatlan, mindig ugyanaz
+# https://cccamfree48h.yolasite.com/server-2.php
+# https://cccammax1.weebly.com/cccam-48.html
 
 cimek="https://cccamiptv.club/free-cccam/
     https://cccameagle.com/fccam/
     https://www.cccambird2.com/freecccam.php
     https://www.cccamprime.com/cccam48h.php
     https://cccam-48h.blogspot.com/p/blog-page_16.html
-    https://premiumcccam.store/freetrial.php
     https://cccamia.com/free-cccam/
     https://cccamstore.tv/free-server.php
-    https://cccammax1.weebly.com/cccam-48.html
     https://cccamfrei.com/free/get.php
     https://cccamprima.com/cccam48h.html
     https://cccamazon.com/free/get.php
-    https://cccamfree48h.yolasite.com/server-2.php
+    https://cccam.net/free
 "
 for webpage in $cimek;do
 nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
 webtest $webpage
 if [ "$teszt" ];then
-    elemek=$(curl -s -k $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*// | sed 's/ #.*//')
+    elemek=$(curl -s -k -m 2 $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*// | sed 's/ #.*//')
     tombir $nev
 fi
 done
