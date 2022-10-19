@@ -22,7 +22,7 @@ function hiba () {
 
 function webtest () {
     teszt=""
-    teszt=$(curl -Is -m 3 $1 | grep OK)
+    teszt=$(curl -Is -m 4 $1 | grep OK)
     if [ ! "$teszt" ];then
         echo "A $1 weblap nem érhető el!"
     fi
