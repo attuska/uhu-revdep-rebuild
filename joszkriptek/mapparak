@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Létrehozza a sources mappákat a paraméterként megadott mappában lévő ubékben
+. szinek
+function hiba () {
+    echo $1
+    echo "Használat: mapparak <mappa>"
+	exit 1
+}
+
+mappa=$1
+if [ ! "$mappa" ];then
+    hiba "mappa paraméter kell!"
+fi
+
+if [ ! -d $mappa ];then
+    hiba "Nincs $mappa mappa!"
+fi
+
+for i in `ls -1 $mappa`;do
+        zoldecho "$i"
+        mkdir -p $mappa/$i/sources
+done
