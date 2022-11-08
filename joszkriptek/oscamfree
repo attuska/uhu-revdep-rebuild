@@ -74,7 +74,7 @@ cimek="https://cccamiptv.club/free-cccam/
     https://cccam.net/free
 "
 for webpage in $cimek;do
-nev=$(echo $webpage | sed s%https://%% | sed s%/.*%%)
+nev=$(echo $webpage | sed s%https://%% | sed s%/.*%% | sed s%www\.%% | sed s%\.com*%%)
 #webtest $webpage
 #if [ "$teszt" ];then
     elemek=$(curl -s -k -m 2 $webpage | grep C: | sed 's/.*C: //' | sed s/\<.*// | sed 's/ #.*//')
