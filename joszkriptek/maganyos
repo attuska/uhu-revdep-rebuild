@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#pirossal írja ki a listában szereplő ubé nevét, ha magányos
+#kékkel, ha csak futásidőban kell
+#zölddel, ha fordításhoz kell
+# csak a fordítási mappában megy és színes
+
+function hiba () {
+	echo 'Használat: maganyos <sorrendfile> '
+	exit 1
+}
+
+# csak a fordítási mappában megy és színes
+. disztbe
+
+if [ -z "$1" ]; then
+    pirosecho sorrendfájl paraméter kell;
+    hiba
+fi
+sorrendfile=$1
+analdir=(`pwd`/devanal)
+bdep=$analdir/bdep
+rdep=$analdir/rdep
+
+if [ ! -d $analdir ];then
+    pirosecho "csak a bdeprak szkript futtatása után lehet használn!"
+    hiba
+fi
+
+if [ ! -f $sorrendfile ];then
+    pirosecho nincs $sorrendfile nevű sorrendfájl
+    hiba
+fi
+
+for i in `cat $sorrendfile`;do
+bszam=$(bdep $i | wc -w)
+rszam=$(rdep $i | wc -w)
+if [ "$bszam" == 0 ];then
+if [ "$rszam" == 0 ];then
+pirosecho $i
+else
+kekecho $i
+fi
+else
+zoldecho $i
+fi
+done
