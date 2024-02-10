@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+cd /usr/src/UHUBUILD/UB-UBK4
+tukorfriss
+cd - > /dev/null
+for i in $(ls -1 ~/gittek/ubk/);do
+echo $i
+echo "~/gittek/ubk/$i"
+cd ~/gittek/ubk/$i
+git pull
+cd - > /dev/null
+done
