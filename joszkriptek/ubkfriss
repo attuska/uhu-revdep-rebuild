@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+for i in $(ls -1 /usr/src/UHUBUILD | grep UB-UBK);do
+cd /usr/src/UHUBUILD/$i
+. disztbe
+
+if [[ "$diszt" < "UBK3" ]] && [[ ! $1 ]];then
+    pirosecho "UBK1 és UBK2 esetén kötelező az architectúra paraméter"
+    hiba
+else
+    if [[ "$diszt" > "UBK2" ]];then
+        arch=amd64
+    else
+        arch=$1
+    fi
+fi
+
+tukor=/usr/src/UHUBUILD/pkg/$diszt/main/
+if [ -d $tukor ];then
+rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$arch $tukor
+fi
+cd - >/dev/null
+done
+
+for i in $(ls -1 ~/gittek/ubk/);do
+echo $i
+echo "~/gittek/ubk/$i"
+cd ~/gittek/ubk/$i
+git pull
+cd - > /dev/null
+done
