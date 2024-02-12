@@ -26,6 +26,7 @@ for i in $(ls -1 ~/gittek/ubk/);do
 echo $i
 echo "~/gittek/ubk/$i"
 cd ~/gittek/ubk/$i
+git status
 git pull
 cd - > /dev/null
 done
