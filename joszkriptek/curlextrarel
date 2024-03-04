@@ -72,7 +72,7 @@ curlcim=http://download.ubk.hu/pkg/${diszt}/main/${arch}/
 rm -rf $erelmappa
 mkdir $erelmappa
 
-zoldecho " Az aktuális extrarelease fájlok az $erelmappa mappába kerülnek."
+zoldecho " Az újrafordításhoz kellő extrarelease fájlok az $erelmappa mappába kerülnek."
 lynx -connect_timeout=5 -listonly -dump $curlcim | sed 's%.*/%%g' | grep "uhu"$ > tmpfile
 
 for i in $csomaghalmaz;do
