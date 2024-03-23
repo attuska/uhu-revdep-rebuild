@@ -90,12 +90,12 @@ function frissgy() {
                 else
                     verziobeszed
                     if [ "$szin" == "kekecho" ];then
-                        mkdir -p $workdir/$frissmappa/noupdate
-                        cp -a $gittdir/$nev $workdir/$frissmappa/noupdate
+                        mkdir -p $workdir/frissek/noupdate
+                        cp -a $gittdir/$nev $workdir/frissek/noupdate
                     fi
                     if [[ ! "$ujver" ]] || [[ $alfanum ]]; then
-                        mkdir -p $workdir/$frissmappa/u2dhiba
-                        cp -a $gittdir/$nev $workdir/$frissmappa/u2dhiba
+                        mkdir -p $workdir/frissek/u2dhiba
+                        cp -a $gittdir/$nev $workdir/frissek/u2dhiba
                     elif [ ! "$over" == "$ujver" ];then
                             cp -a $gittdir/$nev $workdir/$frissmappa
                             echo "$nev $over -> $ujver" >>$workdir/$frissmappa/listafile-uj
