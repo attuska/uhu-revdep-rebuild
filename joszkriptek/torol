@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#letörli a $gittdirben a paraméter fájlban
+#felsorolt mappákat és a $gittdir/Build-order mappában lévő
+#megfelelő mappanaveket, majd a státuszt is közli.
+# csak a fordítási mappában megy és színes
+
+function hiba () {
+	echo 'Használat: töröl <sorrendfájl> '
+	exit 1
+}
+
+# csak a fordítási mappában megy és színes
+. gittdir
+
+if [ -z "$1" ]; then
+    pirosecho sorrendfájl paraméter kell;
+    hiba
+fi
+sorrendfile=$1
+for i in $(cat $sorrendfile);do
+if [ -d $gittdir/$i ];then
+cd $gittdir
+sed /$i/d -i Build-order/*
+git add Build-order
+rm -rf  $i
+git rm -rf $i
+cd - >/dev/null
+fi
+done
+cd $gittdir
+git status
+cd - >/dev/null
