@@ -49,9 +49,6 @@ echo 'README*' >> $pkgname/doc
 echo "UHU-Linux $diszt" > $pkgname/distribution
 echo 'Kiss Attila <attus@enterpriseforever.com>' > $pkgname/maintainer
 echo 'python3-build' > $pkgname/build-depends
-echo 'python3-installer' >> $pkgname/build-depends
-echo 'python3-setuptools-scm' >> $pkgname/build-depends
-echo 'python3-wheel' >> $pkgname/build-depends
 echo 'u2dpypi '"$name" >$pkgname/u2d
 echo "https://pypi.org/project/$name/" > $pkgname/homepage
 touch $pkgname/packages/$pkgname/depends
@@ -65,8 +62,8 @@ echo '	https://files.pythonhosted.org/packages/source/'"${name:0:1}/$name/" >> $
 echo '#!/bin/sh -eux' > $pkgname/install
 echo >> $pkgname/install
 cp $pkgname/install $pkgname/compile
-echo 'python3 -m build --wheel --skip-dependency-check --no-isolation' >> $pkgname/compile
-echo 'python3 -m installer --destdir=${UB_INSTALLDIR} dist/*whl' >> $pkgname/install
+echo 'ub_compile' >> $pkgname/compile
+echo 'ub_install' >> $pkgname/install
 chmod +x $pkgname/acquire $pkgname/compile $pkgname/install
 
 kekecho Fordítás előtti teendők:
