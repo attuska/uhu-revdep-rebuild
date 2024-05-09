@@ -49,7 +49,7 @@ if [ -f u2d ] ; then
     verbe
     szin=normalecho
     if [ "$(cat u2d | grep noupdate)" ];then
-        u2dfile=$(cat version)
+        miert=$(cat u2d | grep noupdate | sed s/noupdate//)
         szin=kekecho
     else
         if [ "$ujver" == "$over" ]; then
@@ -68,6 +68,9 @@ if [ -f u2d ] ; then
 fi
 if [ "$szin" == "zoldecho" ];then
 echo $nev
+elif [ "$szin" == "kekecho" ];then
+kekecho -n "$nev "
+echo $miert
 else
 echo -n "$nev"" ""$over > "
 $szin "$u2dfile"
