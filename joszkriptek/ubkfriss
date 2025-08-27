@@ -17,7 +17,7 @@ fi
 
 tukor=/usr/src/UHUBUILD/pkg/$diszt/main/
 if [ -d $tukor ];then
-rsync -razv --delete rsync://rsync.ubk.hu/pkgs/$diszt/main/$arch $tukor
+rsync -razv --delete rsync://rsync.ubk.hu/pkgs/ $tukor
 fi
 cd - >/dev/null
 done
@@ -26,7 +26,6 @@ for i in $(ls -1 ~/gittek/ubk/);do
 echo $i
 echo "~/gittek/ubk/$i"
 cd ~/gittek/ubk/$i
-#git status -uno
 git pull
 cd - > /dev/null
 done
