@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+for i in $(ls -1 /usr/src/UHUBUILD | grep UB-UBK);do
+cd /usr/src/UHUBUILD/$i
+. disztbe
+
+tukor=/usr/src/UHUBUILD/pkg/amd64/main/ubk4/main/amd64
+ls $tukor
+if [ -d $tukor ];then
+rsync -razv --delete rsync://rsync.ubk.hu/pkgs/ $tukor
+fi
+cd - >/dev/null
+done
+
+for i in $(ls -1 ~/gittek/ubk/);do
+echo $i
+echo "~/gittek/ubk/$i"
+cd ~/gittek/ubk/$i
+git pull
+cd - > /dev/null
+done
+
+# A synapticban a tároló:
+# file://usr/src/UHUBUILD/pkg/amd64/main/UBK4/main/amd64/UBK4/main/amd64/
+# ./
