@@ -1,0 +1,25 @@
+#!/bin/bash
+# Az ubék meglétét ellenőrzo szkript
+
+function hiba () {
+    echo "Használat: ubellenor"
+    echo $1
+	exit 1
+}
+# csak a fordítási mappában megy és színes és ub tároló frissül
+. ubfriss
+        arch=amd64
+
+bintukor=/usr/src/UHUBUILD/pkg/UBK4/main/amd64/
+
+if [ ! -d $bintukor ];then
+    hiba "Nincs $bintukor mappa!"
+fi
+
+for i in `ls -1 $bintukor/*.uhu`;do
+forras=$(dpkg-deb -I $i | grep Source: | sed 's/ Source: //' | sed s/_.*//)
+if [ ! -d $gittdir/$forras ];then
+echo nincs $forras ubé
+fi
+done
+
