@@ -18,8 +18,11 @@ fi
 
 for i in `ls -1 $bintukor/*.uhu`;do
 forras=$(dpkg-deb -I $i | grep Source: | sed 's/ Source: //' | sed s/_.*//)
+echo -n .
 if [ ! -d $gittdir/$forras ];then
+echo
 echo nincs $forras ubé
+echo
 fi
 done
 
