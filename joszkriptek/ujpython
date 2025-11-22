@@ -41,7 +41,7 @@ mkdir -p $pkgname/patches
 mkdir -p $pkgname/sources
 
 echo $pkgname > $pkgname/sourcename
-echo Libraries > $pkgname/packages/$pkgname/section
+echo Python > $pkgname/packages/$pkgname/section
 echo "UHU Linux Baráti Kör" > $pkgname/vendor
 echo 1 >$pkgname/release
 echo 'LICENSE*' > $pkgname/doc
